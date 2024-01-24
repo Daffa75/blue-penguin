@@ -43,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
                 ->modalWidth('lg')
                 ->slideOver()
                 ->labels([
+                    'websiteAdmin' => __('Website Admin'),
                     'publication' => __('Publication'),
                     'finalProject' => __('Final Project'),
                 ])
