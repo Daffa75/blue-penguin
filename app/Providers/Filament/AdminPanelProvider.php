@@ -45,6 +45,8 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->navigationGroups([
                 NavigationGroup::make()
+                    ->label(fn ():string => __('Website')),
+                NavigationGroup::make()
                     ->label(fn ():string => __('Statistics')),
                 NavigationGroup::make()
                     ->label(fn ():string => __('Content')),

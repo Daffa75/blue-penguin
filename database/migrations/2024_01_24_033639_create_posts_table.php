@@ -25,6 +25,8 @@ return new class extends Migration
                 table: 'users', indexName: 'posts_updated_by'
             );
             $table->timestamps();
+            $table->string('image');
+            $table->string('image_url');
         });
     }
 

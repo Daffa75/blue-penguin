@@ -82,8 +82,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
             return in_array($this->role, array('0','1','2','3','4'));
         } elseif ($panel->getId() == 'finalProject') {
             return in_array($this->role, array('0','1','2','3','4'));
-        } elseif ($panel->getId() == 'websiteAdmin') {
-            return in_array($this->role, array('0'));
         }
 
         return false;
