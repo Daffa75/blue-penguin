@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug');
             $table->text('article');
-            $table->string('tag');
             $table->string('language');
             $table->foreignId('created_by')->constrained(
                 table: 'users', indexName: 'posts_created_by'
@@ -25,8 +24,8 @@ return new class extends Migration
                 table: 'users', indexName: 'posts_updated_by'
             );
             $table->timestamps();
-            $table->string('image');
-            $table->string('image_url');
+            $table->date('published_at');
+            $table->string('status');
         });
     }
 
