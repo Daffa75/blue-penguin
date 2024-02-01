@@ -24,7 +24,7 @@ return new class extends Migration
                 table: 'users', indexName: 'posts_updated_by'
             );
             $table->timestamps();
-            $table->date('published_at');
+            $table->dateTime('published_at')->nullable();
             $table->string('status');
         });
     }

@@ -19,7 +19,13 @@ class Post extends Model
         'tag',
         'language',
         'created_by',
-        'updated_by'
+        'updated_by',
+        'published_at',
+        'status',
+    ];
+
+    protected $casts = [
+        'published_at' => 'datetime'
     ];
 
     public function user(): BelongsTo

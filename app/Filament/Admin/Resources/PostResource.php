@@ -2,12 +2,13 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\UserResource\Pages;
-use App\Filament\Admin\Resources\UserResource\RelationManagers;
+use App\Filament\Admin\Resources\PostResource\Pages;
+use App\Filament\Admin\Resources\PostResource\RelationManagers;
 use App\Models\Post;
 use Filament\Forms;
-use Filament\Forms\Components\SpatieTagsInput;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -15,7 +16,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\RichEditor;
 use Illuminate\Support\Str;
-use Filament\Forms\Get;
+use Illuminate\Support\Carbon;
+use Filament\Notifications\Notification;
 
 
 class PostResource extends Resource
@@ -57,13 +59,13 @@ class PostResource extends Resource
                             ])
                             ->columns(2),
 
-                        Forms\Components\Section::make('Image')
-                            ->schema([
-                                Forms\Components\FileUpload::make('image')
-                                    ->image()
-                                    ->hiddenLabel(),
-                            ])
-                            ->collapsible(),
+                        // Forms\Components\Section::make('Image')
+                        //     ->schema([
+                        //         Forms\Components\FileUpload::make('image')
+                        //             ->image()
+                        //             ->hiddenLabel(),
+                        //     ])
+                        //     ->collapsible(),
                     ])
                     ->columnSpan(['lg' => 2]),
 
@@ -74,12 +76,14 @@ class PostResource extends Resource
                                 Forms\Components\Select::make('status')
                                     ->options([
                                         'draft' => 'Draft',
-                                        'reviewing' => 'Reviewing',
                                         'published' => 'Published',
                                     ])
                                     ->required()
                                     ->live(),
+
                                 Forms\Components\DateTimePicker::make('published_at')
+                                    ->seconds(false)
+                                    ->timezone('Asia/Makassar')
                                     ->hidden(fn (Get $get) => $get('status') !== 'published'),
 
                                 Forms\Components\Select::make('language')
@@ -102,20 +106,89 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Image'),
+
+                Tables\Columns\TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('slug')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\BadgeColumn::make('status')
+                    ->getStateUsing(fn (Post $record): string => $record->published_at?->isPast() ? 'Published' : ($record->published_at ? 'Pending' : 'Draft'))
+                    ->sortable()
+                    ->colors([
+                        'success' => 'Published',
+                        'warning' => 'Pending',
+                        'info' => 'Draft',
+                    ]),
+
+                Tables\Columns\TextColumn::make('published_at')
+                    ->label('Published Date')
+                    ->sortable()
+                    ->datetime()
+                    ->timezone('Asia/Makassar'),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('published_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('published_from')
+                            ->placeholder(fn ($state): string => now()->subYear()->format('Y')),
+                        Forms\Components\DatePicker::make('published_until')
+                            ->placeholder(fn ($state): string => now()->format('M d, Y')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['published_from'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('published_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['published_until'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('published_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['published_from'] ?? null) {
+                            $indicators['published_from'] = 'Published from ' . Carbon::parse($data['published_from'])->toFormattedDateString();
+                        }
+                        if ($data['published_until'] ?? null) {
+                            $indicators['published_until'] = 'Published until ' . Carbon::parse($data['published_until'])->toFormattedDateString();
+                        }
+
+                        return $indicators;
+                    }),
+                Tables\Filters\SelectFilter::make('status')
+                    ->multiple()
+                    ->options([
+                        'draft' => 'Draft',
+                        'published' => 'Published',
+                    ]),
+                    
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
+
                 Tables\Actions\EditAction::make(),
+
+                Tables\Actions\DeleteAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+            ->groupedBulkActions([
+                Tables\Actions\DeleteBulkAction::make()
+                    ->action(function () {
+                        Notification::make()
+                            ->title('Delete Failed')
+                            ->warning()
+                            ->send();
+                    }),
             ]);
     }
+
 
     public static function getRelations(): array
     {
@@ -129,6 +202,7 @@ class PostResource extends Resource
         return [
             'index' => Pages\ListPosts::route('/'),
             'create' => Pages\CreatePost::route('/create'),
+            'view' => Pages\ViewPost::route('/{record}'),
             'edit' => Pages\EditPost::route('/{record}/edit'),
         ];
     }

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Admin\Resources\UserResource\Pages;
+namespace App\Filament\Admin\Resources\PostResource\Pages;
 
 use App\Filament\Admin\Resources\PostResource;
 use Filament\Actions;
-use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\ViewRecord;
 
-class CreatePost extends CreateRecord
+class ViewPost extends ViewRecord
 {
     protected static string $resource = PostResource::class;
 }
