@@ -9,16 +9,20 @@ use Filament\Forms;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Forms\Components\SpatieTagsInput;
+use Filament\Infolists\Components;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Filament\Notifications\Notification;
-
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\SpatieTagsColumn;
 
 class PostResource extends Resource
 {
@@ -59,13 +63,17 @@ class PostResource extends Resource
                             ])
                             ->columns(2),
 
-                        // Forms\Components\Section::make('Image')
-                        //     ->schema([
-                        //         Forms\Components\FileUpload::make('image')
-                        //             ->image()
-                        //             ->hiddenLabel(),
-                        //     ])
-                        //     ->collapsible(),
+                        Forms\Components\Section::make('Image')
+                            ->schema([
+                                SpatieMediaLibraryFileUpload::make('image')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->imageResizeMode('contain')
+                                    ->imageCropAspectRatio('16:9')
+                                    ->collection('post/images')
+                                    ->hiddenLabel()
+                            ])
+                            ->collapsible(),
                     ])
                     ->columnSpan(['lg' => 2]),
 
@@ -106,7 +114,7 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image')
+                SpatieMediaLibraryImageColumn::make('image')->collection('post/images')
                     ->label('Image'),
 
                 Tables\Columns\TextColumn::make('title')
@@ -132,6 +140,11 @@ class PostResource extends Resource
                     ->sortable()
                     ->datetime()
                     ->timezone('Asia/Makassar'),
+
+                SpatieTagsColumn::make('tags')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\Filter::make('published_at')
@@ -169,7 +182,7 @@ class PostResource extends Resource
                         'draft' => 'Draft',
                         'published' => 'Published',
                     ]),
-                    
+
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -180,15 +193,10 @@ class PostResource extends Resource
             ])
             ->groupedBulkActions([
                 Tables\Actions\DeleteBulkAction::make()
-                    ->action(function () {
-                        Notification::make()
-                            ->title('Delete Failed')
-                            ->warning()
-                            ->send();
-                    }),
             ]);
     }
 
+   
 
     public static function getRelations(): array
     {
