@@ -46,6 +46,7 @@ class PostResource extends Resource
                         Forms\Components\Section::make()
                             ->schema([
                                 Forms\Components\TextInput::make('title')
+                                    ->translateLabel()
                                     ->required()
                                     ->live(onBlur: true)
                                     ->maxLength(255)
@@ -59,12 +60,13 @@ class PostResource extends Resource
                                     ->unique(Post::class, 'slug', ignoreRecord: true),
 
                                 Forms\Components\MarkdownEditor::make('article')
+                                    ->fileAttachmentsDirectory('post/attachments')
                                     ->required()
                                     ->columnSpan('full'),
                             ])
                             ->columns(2),
 
-                        Forms\Components\Section::make('Image')
+                        Forms\Components\Section::make(__('Image'))
                             ->schema([
                                 SpatieMediaLibraryFileUpload::make('image')
                                     ->image()
@@ -96,6 +98,7 @@ class PostResource extends Resource
                                     ->hidden(fn (Get $get) => $get('status') !== 'published'),
 
                                 Forms\Components\Select::make('language')
+                                    ->label(__("Language"))
                                     ->options([
                                         'id' => 'Bahasa Indonesia',
                                         'en' => 'English',
@@ -116,9 +119,10 @@ class PostResource extends Resource
         return $table
             ->columns([
                 SpatieMediaLibraryImageColumn::make('image')->collection('post/images')
-                    ->label('Image'),
+                    ->label(__('Image')),
 
                 Tables\Columns\TextColumn::make('title')
+                    ->translateLabel()
                     ->searchable()
                     ->sortable(),
 
@@ -137,14 +141,14 @@ class PostResource extends Resource
                     ]),
 
                 Tables\Columns\TextColumn::make('published_at')
-                    ->label('Published Date')
+                    ->label(__('Published Date'))
                     ->sortable()
                     ->datetime()
                     ->timezone('Asia/Makassar'),
 
-                SpatieTagsColumn::make('tags')
+                    Tables\Columns\TextColumn::make('tags.name')
+                    ->badge()
                     ->searchable()
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -204,18 +208,20 @@ class PostResource extends Resource
                 Components\Group::make([
                     Components\Section::make()
                         ->schema([
-                            Components\TextEntry::make('title'),
+                            Components\TextEntry::make('title')
+                                ->translateLabel(),
+
                             Components\Split::make([
                                 Components\Grid::make(['lg' => 3, 'md' => 2])
                                     ->schema([
                                         Components\Group::make([
                                             Components\TextEntry::make('updated_by.name')
-                                            ->label('Last updated by'),
+                                                ->label(__('Last updated by')),
                                         ]),
 
                                         Components\Group::make([
                                             Components\TextEntry::make('created_by.name')
-                                            ->label('Created by'),
+                                                ->label(__('Created by')),
                                         ]),
 
                                         Components\SpatieTagsEntry::make('tags'),
@@ -253,6 +259,7 @@ class PostResource extends Resource
                                 }),
 
                             Components\TextEntry::make('published_at')
+                                ->label(__('Published Date'))
                                 ->date('l, d M Y')
                                 ->hidden(fn ($record) => !$record->status === 'published')
                         ]),

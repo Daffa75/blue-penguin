@@ -120,7 +120,7 @@ class FinalProjectResource extends Resource
                     ->wrap()
                     ->description(fn (FinalProject $record): string => $record->student->nim, position: 'above')
                     ->description(function (FinalProject $record): Htmlable {
-                        return new HtmlString("<span class='text-gray-600 dark:text-gray-500 text-xs'>$record->title</span>");
+                        return new HtmlString("<span class='text-xs text-gray-600 dark:text-gray-500'>$record->title</span>");
                     })
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query

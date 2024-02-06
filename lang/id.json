@@ -115,5 +115,10 @@
     "Trade Secret": "Rahasia Dagang",
     "Layout Design": "Desain Tata Letak",
     "Website Admin": "Admin Website",
-    "Website": "Website"
+    "Website": "Website",
+    "Image" : "Gambar",
+    "Published Date" : "Tanggal Terbit",
+    "Language" : "Bahasa",
+    "Last updated by" : "Diperbarui Oleh",
+    "Created by" : "Dibuat Oleh"
 }
