@@ -10,6 +10,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Infolists\Components;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -196,7 +197,70 @@ class PostResource extends Resource
             ]);
     }
 
-   
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Components\Group::make([
+                    Components\Section::make()
+                        ->schema([
+                            Components\TextEntry::make('title'),
+                            Components\Split::make([
+                                Components\Grid::make(['lg' => 3, 'md' => 2])
+                                    ->schema([
+                                        Components\Group::make([
+                                            Components\TextEntry::make('updated_by.name')
+                                            ->label('Last updated by'),
+                                        ]),
+
+                                        Components\Group::make([
+                                            Components\TextEntry::make('created_by.name')
+                                            ->label('Created by'),
+                                        ]),
+
+                                        Components\SpatieTagsEntry::make('tags'),
+                                    ]),
+                                Components\ImageEntry::make('image')
+                                    ->hiddenLabel()
+                                    ->grow(false),
+                            ])->from('lg'),
+                        ]),
+                    Components\Section::make('Content')
+                        ->schema([
+                            Components\TextEntry::make('article')
+                                ->prose()
+                                ->markdown()
+                                ->hiddenLabel(),
+                        ])
+                        ->collapsible(),
+                ])
+                    ->columnSpan(['lg' => 2]),
+
+                Components\Group::make([
+                    Components\Section::make()
+                        ->schema([
+                            SpatieMediaLibraryImageEntry::make('image')
+                                ->hiddenLabel()
+                                ->collection('post/images'),
+
+                            Components\TextEntry::make('status')
+                                ->badge()
+                                ->getStateUsing(fn (Post $record): string => $record->published_at?->isPast() ? 'Published' : ($record->published_at ? 'Pending' : 'Draft'))
+                                ->color(fn (string $state): string => match ($state) {
+                                    'Published' => 'success',
+                                    'Pending' => 'warning',
+                                    'Draft' => 'info',
+                                }),
+
+                            Components\TextEntry::make('published_at')
+                                ->date('l, d M Y')
+                                ->hidden(fn ($record) => !$record->status === 'published')
+                        ]),
+                ])
+                    ->columnSpan(['lg' => 1]),
+            ])
+            ->columns(['lg' => 3]);
+    }
 
     public static function getRelations(): array
     {
