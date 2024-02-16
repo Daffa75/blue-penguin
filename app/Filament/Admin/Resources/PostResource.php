@@ -93,6 +93,7 @@ class PostResource extends Resource
                                     ->live(),
 
                                 Forms\Components\DateTimePicker::make('published_at')
+                                    ->nullable()
                                     ->seconds(false)
                                     ->timezone('Asia/Makassar')
                                     ->hidden(fn (Get $get) => $get('status') !== 'published'),
