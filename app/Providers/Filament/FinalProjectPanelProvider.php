@@ -22,8 +22,6 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-use Rupadana\ApiService\ApiServicePlugin;
-
 class FinalProjectPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -48,9 +46,7 @@ class FinalProjectPanelProvider extends PanelProvider
                 FinalProjectStudentChart::class,
             ])
             ->sidebarCollapsibleOnDesktop()
-            ->plugins([
-                ApiServicePlugin::make()
-            ])
+            ->plugins([])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
