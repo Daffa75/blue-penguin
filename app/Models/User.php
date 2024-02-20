@@ -18,6 +18,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Color\Rgb;
+use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
@@ -26,6 +27,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
+    use HasSuperAdmin;
 
     /**
      * The attributes that are mass assignable.

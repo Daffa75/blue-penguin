@@ -20,6 +20,7 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 use Rupadana\ApiService\ApiServicePlugin;
+use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -56,7 +57,9 @@ class AdminPanelProvider extends PanelProvider
                     ->label(fn ():string => __('Management')),
             ])
             ->plugins([
-                ApiServicePlugin::make()
+                ApiServicePlugin::make(),
+                FilamentSpatieRolesPermissionsPlugin::make()
+
             ])
             ->middleware([
                 EncryptCookies::class,
