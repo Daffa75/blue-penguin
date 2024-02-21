@@ -80,7 +80,7 @@ class UserResource extends Resource
                         '3' => 'Dosen',
                         '4' => 'Admin 2',
                     ]),
-                Forms\Components\Select::make('roles')->multiple()->relationship('roles', 'name')
+                Forms\Components\Select::make('roles')->multiple()->relationship('roles', 'name')->label('Api Role')
 
             ]);
     }

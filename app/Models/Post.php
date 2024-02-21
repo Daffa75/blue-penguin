@@ -50,10 +50,6 @@ class Post extends Model implements HasMedia
         'status',
     ];
 
-    protected $casts = [
-        'published_at' => 'datetime'
-    ];
-
     public function created_by(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
