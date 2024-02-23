@@ -3,7 +3,6 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\ContentsResource\Pages;
-use App\Models\Contents;
 use App\Models\WebsitePages;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -15,14 +14,14 @@ class ContentsResource extends Resource
 {
     protected static ?string $model = WebsitePages::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'phosphor-browsers';
     public static function getNavigationGroup(): ?string
     {
         return (__('Website'));
     }
     public static function getPluralLabel(): ?string
     {
-        return __('Content');
+        return __('Page Contents');
     }
 
     public static function form(Form $form): Form
