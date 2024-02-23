@@ -31,7 +31,7 @@ class UserResource extends Resource
         $username = $record->username;
 
         if ($email !== null) {
-            $details['Email'] =  $email;
+            $details['Email'] = $email;
         }
 
         if ($username !== null) {
@@ -66,9 +66,9 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('password')
                     ->translateLabel()
                     ->password()
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                    ->dehydrated(fn ($state) => \filled($state))
-                    ->required(fn (string $context): bool => $context === 'create'),
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                    ->dehydrated(fn($state) => \filled($state))
+                    ->required(fn(string $context): bool => $context === 'create'),
                 Forms\Components\Select::make('role')
                     ->translateLabel()
                     ->native(false)
@@ -79,7 +79,9 @@ class UserResource extends Resource
                         '1' => 'Admin 1',
                         '3' => 'Dosen',
                         '4' => 'Admin 2',
-                    ])
+                    ]),
+                Forms\Components\Select::make('roles')->multiple()->relationship('roles', 'name')
+
             ]);
     }
 

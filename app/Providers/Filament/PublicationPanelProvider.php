@@ -23,6 +23,8 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
+use Rupadana\ApiService\ApiServicePlugin;
+
 class PublicationPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -49,7 +51,9 @@ class PublicationPanelProvider extends PanelProvider
                 PublicationLineChart::class,
             ])
             ->sidebarCollapsibleOnDesktop()
-            ->plugins([])
+            ->plugins([
+                ApiServicePlugin::make()
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
