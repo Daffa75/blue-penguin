@@ -107,6 +107,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function post(): HasMany
     {
-        return $this->hasMany(FinalProject::class);
+        return $this->hasMany(Post::class);
     }
 }

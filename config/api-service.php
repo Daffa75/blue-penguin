@@ -4,7 +4,7 @@
 return [
     'navigation' => [
         'group' => [
-            'token' => 'Website',
+            'token' => 'Roles and Permissions',
         ],
     ],
     'models' => [
