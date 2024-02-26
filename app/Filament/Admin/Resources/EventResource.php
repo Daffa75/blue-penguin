@@ -57,6 +57,7 @@ class EventResource extends Resource
                                     ->unique(Event::class, 'slug', ignoreRecord: true),
 
                                 Forms\Components\MarkdownEditor::make('description')
+                                    ->translateLabel()
                                     ->fileAttachmentsDirectory('event/attachments')
                                     ->required()
                                     ->columnSpan('full'),
@@ -82,6 +83,7 @@ class EventResource extends Resource
                         Forms\Components\Section::make('Option')
                             ->schema([
                                 Forms\Components\DatePicker::make('date')
+                                    ->timezone('Asia/Makassar')
                                     ->translateLabel()
                                     ->required(),
 
@@ -104,7 +106,7 @@ class EventResource extends Resource
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image')->collection('post/images')
+                SpatieMediaLibraryImageColumn::make('image')->collection('event/images')
                     ->label(__('Image')),
 
                 Tables\Columns\TextColumn::make('title')
@@ -122,7 +124,7 @@ class EventResource extends Resource
                 Tables\Columns\TextColumn::make('date')
                     ->translateLabel()
                     ->sortable()
-                    ->datetime()
+                    ->date('l, d M Y')
                     ->timezone('Asia/Makassar'),
 
                 Tables\Columns\TextColumn::make('language')
@@ -137,41 +139,41 @@ class EventResource extends Resource
             ])
             ->filters([
                 Tables\Filters\Filter::make('date')
-                ->form([
-                    Forms\Components\DatePicker::make('from')
-                        ->placeholder(fn($state): string => now()->subYear()->format('Y')),
-                    Forms\Components\DatePicker::make('until')
-                        ->placeholder(fn($state): string => now()->format('M d, Y')),
-                ])
-                ->query(function (Builder $query, array $data): Builder {
-                    return $query
-                        ->when(
-                            $data['from'] ?? null,
-                            fn(Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
-                        )
-                        ->when(
-                            $data['until'] ?? null,
-                            fn(Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
-                        );
-                })
-                ->indicateUsing(function (array $data): array {
-                    $indicators = [];
-                    if ($data['from'] ?? null) {
-                        $indicators['from'] = 'From ' . Carbon::parse($data['from'])->toFormattedDateString();
-                    }
-                    if ($data['until'] ?? null) {
-                        $indicators['until'] = 'Until ' . Carbon::parse($data['until'])->toFormattedDateString();
-                    }
+                    ->form([
+                        Forms\Components\DatePicker::make('from')
+                            ->placeholder(fn($state): string => now()->subYear()->format('Y')),
+                        Forms\Components\DatePicker::make('until')
+                            ->placeholder(fn($state): string => now()->format('M d, Y')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['from'] ?? null,
+                                fn(Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
+                            )
+                            ->when(
+                                $data['until'] ?? null,
+                                fn(Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['from'] ?? null) {
+                            $indicators['from'] = 'From ' . Carbon::parse($data['from'])->toFormattedDateString();
+                        }
+                        if ($data['until'] ?? null) {
+                            $indicators['until'] = 'Until ' . Carbon::parse($data['until'])->toFormattedDateString();
+                        }
 
-                    return $indicators;
-                }),
-            Tables\Filters\SelectFilter::make('language')
-                ->translatelabel()
-                ->multiple()
-                ->options([
-                    'en' => 'English',
-                    'id' => 'Indonesia',
-                ]),
+                        return $indicators;
+                    }),
+                Tables\Filters\SelectFilter::make('language')
+                    ->translatelabel()
+                    ->multiple()
+                    ->options([
+                        'en' => 'English',
+                        'id' => 'Indonesia',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -250,8 +252,8 @@ class EventResource extends Resource
     {
         return [
             'index' => Pages\ListEvents::route('/'),
-            'view' => Pages\ViewEvent::route('/{record}'),
             'create' => Pages\CreateEvent::route('/create'),
+            'view' => Pages\ViewEvent::route('/{record}'),
             'edit' => Pages\EditEvent::route('/{record}/edit'),
         ];
     }
