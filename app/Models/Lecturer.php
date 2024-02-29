@@ -34,4 +34,8 @@ class Lecturer extends Model
     {
         return $this->belongsToMany(Haki::class);
     }
+    public function laboratories(): BelongsToMany
+    {
+        return $this->belongsToMany(Laboratory::class)->withPivot('role');
+    }
 }

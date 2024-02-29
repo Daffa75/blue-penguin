@@ -27,4 +27,8 @@ class Student extends Model
     {
         return $this->belongsToMany(Publication::class);
     }
+    public function laboratories(): BelongsToMany
+    {
+        return $this->belongsToMany(Laboratory::class)->withPivot('role');
+    }
 }
