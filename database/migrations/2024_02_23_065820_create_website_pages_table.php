@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('page');
             $table->text('content');
-            $table->string('language');
+            $table->enum('language', array('id', 'en'))->default('id');
         });
     }
 

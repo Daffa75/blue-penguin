@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\ContentsResource\Pages;
+use App\Filament\Admin\Resources\WebsitePagesResource\Pages;
 use App\Models\WebsitePages;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -10,7 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-class ContentsResource extends Resource
+class WebsitePagesResource extends Resource
 {
     protected static ?string $model = WebsitePages::class;
 
@@ -21,7 +21,7 @@ class ContentsResource extends Resource
     }
     public static function getPluralLabel(): ?string
     {
-        return __('Page Contents');
+        return __('Pages Content');
     }
 
     public static function form(Form $form): Form
@@ -56,6 +56,13 @@ class ContentsResource extends Resource
 
     public static function table(Table $table): Table
     {
+        // Dynamically set pages options filter
+        $pageNames = \app\Models\WebsitePages::orderBy('page', 'asc')->groupBy('page')->pluck('page')->toArray();
+        $pageOptions = [];
+        foreach ($pageNames as $page) {
+            $pageOptions[$page] = $page;
+        }
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('page')
@@ -72,7 +79,15 @@ class ContentsResource extends Resource
                 Tables\Columns\TextColumn::make('language')
                     ->sortable(),
             ])
-            ->filters([])
+            ->filters([
+                Tables\Filters\SelectFilter::make('page')
+                    ->options($pageOptions),
+                Tables\Filters\SelectFilter::make('language')
+                    ->options([
+                        'id' => 'Bahasa Indonesia',
+                        'en' => 'English',
+                    ]),
+            ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
@@ -89,9 +104,9 @@ class ContentsResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContents::route('/'),
-            'create' => Pages\CreateContents::route('/create'),
-            'edit' => Pages\EditContents::route('/{record}/edit'),
+            'index' => Pages\ListWebsitePages::route('/'),
+            'create' => Pages\CreateWebsitePages::route('/create'),
+            'edit' => Pages\EditWebsitePages::route('/{record}/edit'),
         ];
     }
 }
