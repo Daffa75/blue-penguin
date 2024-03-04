@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources\CurriculumStructure\StructureResource\RelationManagers;
 
 use App\Filament\Admin\Resources\CurriculumStructure\SemesterResource;
+use App\Models\Curriculum\Module;
 use App\Models\Curriculum\Semester;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -41,22 +42,21 @@ class SemesterRelationManager extends RelationManager
                     ->label(__('Semester Name')),
                 Tables\Columns\TextColumn::make('credit_total')
                     ->label(__('Credit Total')),
+                Tables\Columns\TextColumn::make('Total Mata Kuliah')
+                    ->label(__('Total Mata Kuliah'))
+                    ->state(function (?Semester $record) {
+                        $modulesCount = Module::where('semester_id', '=', $record->id)->count();
+                        return $modulesCount;
+                    }),
             ])
             ->filters([
                 //
             ])
-            ->headerActions([
-                Tables\Actions\CreateAction::make(),
-            ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    -> url(fn (Semester $record): string => SemesterResource::getUrl('edit', [$record])),
-                Tables\Actions\DeleteAction::make(),
+                //
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                //
             ]);
     }
 }
