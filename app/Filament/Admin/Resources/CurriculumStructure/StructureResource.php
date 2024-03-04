@@ -15,12 +15,19 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Infolists\Components;
+use Filament\Infolists\Infolist;
+use Filament\Pages\Page;
+use Filament\Pages\SubNavigationPosition;
 
 class StructureResource extends Resource
 {
     protected static ?string $model = CurriculumStructure::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
     public static function getNavigationGroup(): ?string
     {
         return (__('Website'));
@@ -94,12 +101,12 @@ class StructureResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('Total Semester')
-                ->label(__('Total Semester'))
+                    ->label(__('Total Semester'))
                     ->state(function (?CurriculumStructure $record) {
                         $semesterCount = Semester::where('curriculum_id', '=', $record->id)->count();
                         return $semesterCount;
                     }),
-                    // ->label('Updated at'),
+                // ->label('Updated at'),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Updated at')
                     ->dateTime('l, j F Y'),
@@ -130,6 +137,7 @@ class StructureResource extends Resource
                     ->columnSpan(2),
             ], layout: Tables\Enums\FiltersLayout::AboveContent)
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -147,62 +155,57 @@ class StructureResource extends Resource
         ];
     }
 
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            StructureResource\Pages\ViewStructure::class,
+            StructureResource\Pages\EditStructure::class,
+            StructureResource\Pages\SemestersStructure::class,
+        ]);
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListStructures::route('/'),
             'create' => Pages\CreateStructure::route('/create'),
             'edit' => Pages\EditStructure::route('/{record}/edit'),
+            'view' => Pages\ViewStructure::route('/{record}/view'),
+            'semesters' => Pages\SemestersStructure::route('/{record}/semesters'),
         ];
     }
 
-    /**
-     * Get Semesters Repeater
-     * 
-     */
-    public static function getSemestersRepeater($getOptions): Repeater
+    public static function infolist(Infolist $infolist): Infolist
     {
-        return Repeater::make('semester')
-            ->label('Semesters')
+        return $infolist
             ->schema([
-                Forms\Components\TextInput::make('curriculum_name')->disabled(),
-                // Forms\Components\TextInput::make('id'),
-                Forms\Components\Select::make('id')
-                    ->label('Semester')
-                    ->native(false)
-                    ->options($getOptions)
-                    ->searchable()
-                    ->required()
-                    ->reactive()
-                    ->afterStateUpdated(fn ($state, Forms\Set $set) => $set('curriculum_name', CurriculumStructure::find($state)?->curriculum_name ?? "Unknown"))
-                    ->disableOptionsWhenSelectedInSiblingRepeaterItems(),
-
-                Forms\Components\TextInput::make('credit_total')
-                    ->label('Credit Total')
-                    ->numeric()
-                    ->required(),
+                Components\Group::make()
+                    ->schema([
+                        Components\Section::make('Curriculum')
+                            ->schema([
+                                Components\TextEntry::make('id')
+                                ->label(__('Curriculum ID')),
+                                Components\TextEntry::make('curriculum_name')
+                                ->label(__('Curriculum Name')),
+                                Components\TextEntry::make('language')
+                                ->label(__('Language'))
+                                ->state(fn ($record) => $record === 'id' ? 'Bahasa Indonesia' : 'English')
+                            ])
+                            ->columns(2)
+                            ->columnSpan(2),
+                        Components\Section::make()
+                            ->schema([
+                                Components\TextEntry::make('created_at')
+                                ->dateTime('l, j F Y')
+                                ->since(),
+                                Components\TextEntry::make('updated_at')
+                                ->dateTime('l, j F Y')
+                                ->since(),
+                            ])
+                            ->columnSpan(1),
+                    ])
+                    ->columns(3)
             ])
-            ->extraItemActions([
-                Action::make('openSemester')
-                    ->tooltip('Open Semester')
-                    ->icon('heroicon-m-arrow-top-right-on-square')
-                    ->url(function (array $arguments, Repeater $component): ?string {
-                        $semesterData = $component->getRawItemState($arguments['item']);
-
-                        $semester = Semester::find($semesterData['id']);
-
-                        if (!$semester) {
-                            return null;
-                        }
-
-                        return SemesterResource::getUrl('edit', ['record' => $semester]);
-                    }, shouldOpenInNewTab: true)
-                    ->hidden(fn (array $arguments, Repeater $component): bool => blank($component->getRawItemState($arguments['item'])['id'])),
-            ])
-            ->grid(2)
-            ->reorderable()
-            ->hiddenLabel()
-            ->required()
-            ->relationship();
+            ->columns(1);
     }
 }
