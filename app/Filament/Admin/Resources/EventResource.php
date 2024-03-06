@@ -32,6 +32,11 @@ class EventResource extends Resource
         return (__('Website'));
     }
 
+    public static function getPluralLabel(): ?string
+    {
+        return __('Event');
+    }
+
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form

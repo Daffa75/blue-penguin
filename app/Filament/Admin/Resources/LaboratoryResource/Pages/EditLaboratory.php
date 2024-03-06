@@ -16,4 +16,9 @@ class EditLaboratory extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Edit Laboratory');
+    }
 }

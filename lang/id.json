@@ -128,5 +128,9 @@
     "Staff" : "Staff",
     "Bachelor" : "Sarjana",
     "Magister" : "Magister",
+    "Event" : "Kegiatan",
+    "Laboratory" : "Laboratorium",
+    "Page Contents" : "Halaman",
+    "Edit Laboratory" : "Edit Laboratorium",
     "Date" : "Tanggal"
 }

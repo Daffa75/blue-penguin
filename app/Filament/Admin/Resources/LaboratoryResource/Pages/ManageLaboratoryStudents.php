@@ -24,7 +24,7 @@ class ManageLaboratoryStudents extends ManageRelatedRecords
 
     public static function getNavigationLabel(): string
     {
-        return 'Students';
+        return __('Students');
     }
 
     public function table(Table $table): Table
@@ -70,13 +70,12 @@ class ManageLaboratoryStudents extends ManageRelatedRecords
                     ->modalHeading(__("Attach Student"))
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DetachAction::make()
             ])
             ->defaultSort('role', 'asc')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DetachBulkAction::make()
                 ]),
             ]);
     }

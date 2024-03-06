@@ -31,6 +31,11 @@ class LaboratoryResource extends Resource
         return(__('Website'));
     }
 
+    public static function getPluralLabel(): ?string
+    {
+        return __('Laboratory');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
