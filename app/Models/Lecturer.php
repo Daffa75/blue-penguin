@@ -38,4 +38,8 @@ class Lecturer extends Model
     {
         return $this->belongsToMany(Laboratory::class)->withPivot('role');
     }
+    // public function teachingStaff(): BelongsTo
+    // {
+    //     return $this->belongsTo(TeachingStaff::class);
+    // }
 }
