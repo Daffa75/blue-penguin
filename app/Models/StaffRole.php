@@ -12,7 +12,7 @@ class StaffRole extends Model
 
     protected $fillable = [
         'role_en',
-        'role_id'
+        'role_idn'
     ];
 
     // public function teachingStaff(): BelongsTo

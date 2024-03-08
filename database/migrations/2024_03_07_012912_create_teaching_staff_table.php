@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('lecturer_id');
             $table->bigInteger('role_id');
-            $table->string('expertise');
+            $table->string('expertise_en');
+            $table->string('expertise_idn');
             $table->string('link');
             $table->timestamps();
         });

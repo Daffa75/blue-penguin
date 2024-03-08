@@ -5,26 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class TeachingStaff extends Model
+class AdministrativeStaff extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'lecturer_id',
+        'user_id',
         'role_id',
-        'expertise_en',
-        'expertise_idn',
+        'expertise',
         'link'
     ];
 
-    public function lecturer(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Lecturer::class);
+        return $this->belongsTo(User::class);
     }
     public function role(): BelongsTo
     {
         return $this->belongsTo(StaffRole::class);
     }
 }
+

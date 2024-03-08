@@ -28,7 +28,7 @@ class StaffRoleResource extends Resource
                     ->translateLabel()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('role_id')
+                Forms\Components\TextInput::make('role_idn')
                     ->label('Position in Indonesian')
                     ->translateLabel()
                     ->required()
@@ -42,7 +42,7 @@ class StaffRoleResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('role_en')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('role_id')
+                Tables\Columns\TextColumn::make('role_idn')
                     ->searchable(),
             ])
             ->filters([

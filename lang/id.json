@@ -133,8 +133,14 @@
     "Page Contents" : "Halaman",
     "Edit Laboratory" : "Edit Laboratorium",
     "Position in English" : "Posisi dalam Bahasa Inggris",
-    "Position in Indonesian" : "Posisi dalam Bahasa Inggris",
+    "Position in Indonesian" : "Posisi dalam Bahasa Indonesia",
     "Position" : "Posisi",
     "Expertise" : "Keahlian",
+    "Teaching Staff" : "Tenaga Pengajar",
+    "Staff Role" : "Peran Staff",
+    "Administrative Staff" : "Tenaga Administratif",
+    "Expertise in English" : "Keahlian dalam Bahasa Inggris",
+    "Expertise in Indonesian" : "Keahlian dalam Bahasa Indonesia",
+    "Handbook Link" : "Tautan Handbook",
     "Date" : "Tanggal"
 }

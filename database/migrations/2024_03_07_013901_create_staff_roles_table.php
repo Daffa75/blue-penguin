@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('staff_roles', function (Blueprint $table) {
             $table->id();
             $table->string('role_en');
-            $table->string('role_id');
+            $table->string('role_idn');
             $table->timestamps();
         });
     }

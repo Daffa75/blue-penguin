@@ -27,38 +27,53 @@ class TeachingStaffResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('lecturer_id')
-                    ->label('Lecturer')
-                    ->unique()
-                    ->translateLabel()
-                    ->options(Lecturer::all()->pluck('name', 'id'))
-                    ->searchable()
-                    ->required(),
-                Forms\Components\Select::make('role_id')
-                    ->label('Position')
-                    ->translateLabel()
-                    ->options(StaffRole::all()->pluck('role_en', 'id'))
-                    ->searchable()
-                    ->createOptionForm([
-                        Forms\Components\TextInput::make('role_en')
-                            ->label('Position in English')
+                Forms\Components\Section::make()
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\Select::make('lecturer_id')
+                            ->label('Lecturer')
+                            ->unique()
+                            ->translateLabel()
+                            ->options(Lecturer::all()->pluck('name', 'id'))
+                            ->searchable()
+                            ->required(),
+                        Forms\Components\Select::make('role_id')
+                            ->label('Position')
+                            ->helperText('dalam bahasa indonesia')
+                            ->translateLabel()
+                            ->relationship(name: 'role', titleAttribute: 'role_idn')
+                            ->searchable()
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('role_en')
+                                    ->label('Position in English')
+                                    ->translateLabel()
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('role_idn')
+                                    ->label('Position in Indonesian')
+                                    ->translateLabel()
+                                    ->required()
+                                    ->maxLength(255)
+                            ])
+                            ->required(),
+                        Forms\Components\TextInput::make('expertise_en')
+                            ->label('Expertise in English')
                             ->translateLabel()
                             ->required()
                             ->maxLength(255),
-                        Forms\Components\TextInput::make('role_id')
-                            ->label('Position in Indonesian')
+                        Forms\Components\TextInput::make('expertise_idn')
+                            ->label('Expertise in Indonesian')
                             ->translateLabel()
                             ->required()
-                            ->maxLength(255)
-                    ])
-                    ->required(),
-                Forms\Components\TextInput::make('expertise')
-                    ->translateLabel()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('link')
-                    ->required()
-                    ->maxLength(255),
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('link')
+                            ->label('Handbook Link')
+                            ->translateLabel()
+                            ->required()
+                            ->maxLength(255),
+                    ]),
+
+
             ]);
     }
 
@@ -67,8 +82,8 @@ class TeachingStaffResource extends Resource
         return $table
             ->columns([
                 ImageColumn::make('lecturer.image_url')
-                ->label('')
-                ->circular(),
+                    ->label('')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('lecturer.name')
                     ->translateLabel()
                     ->sortable(),
