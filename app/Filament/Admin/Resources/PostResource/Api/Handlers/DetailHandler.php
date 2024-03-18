@@ -6,6 +6,7 @@ use App\Filament\Resources\SettingResource;
 use App\Filament\Admin\Resources\PostResource;
 use Rupadana\ApiService\Http\Handlers;
 use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Http\Request;
 
 class DetailHandler extends Handlers
 {
@@ -13,12 +14,19 @@ class DetailHandler extends Handlers
     public static string | null $resource = PostResource::class;
 
 
-    public function handler($id)
+    public function handler(Request $request)
     {
+        $id = $request->route('id');
+
         $model = static::getModel()::query();
 
         $query = QueryBuilder::for(
-            $model->where(static::getKeyName(), $id)->with('media')
+            $model
+            ->where(static::getKeyName(), $id)
+            ->where('status', 'published')
+            ->where('published_at', '<=', now())
+            ->with('media')
+            ->with('created_by')
         )
             ->first();
 
