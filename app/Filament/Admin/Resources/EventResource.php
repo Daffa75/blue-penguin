@@ -88,7 +88,7 @@ class EventResource extends Resource
                         Forms\Components\Section::make('Option')
                             ->schema([
                                 Forms\Components\DatePicker::make('date')
-                                    ->timezone('Asia/Makassar')
+                                    
                                     ->translateLabel()
                                     ->required(),
 
@@ -130,7 +130,7 @@ class EventResource extends Resource
                     ->translateLabel()
                     ->sortable()
                     ->date('l, d M Y')
-                    ->timezone('Asia/Makassar'),
+                    ,
 
                 Tables\Columns\TextColumn::make('language')
                     ->sortable()
@@ -205,6 +205,7 @@ class EventResource extends Resource
                                     ->schema([
                                         Components\TextEntry::make('date')
                                             ->translatelabel()
+                                            
                                             ->date('l, d M Y'),
 
                                         Components\Group::make([
