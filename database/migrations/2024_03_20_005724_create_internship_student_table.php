@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('students', function (Blueprint $table) {
-            // $table->foreignId('user_id')->after('id')->nullable()->constrained();
-        });
+        // Schema::create('internship_student', function (Blueprint $table) {
+        //     $table->foreignId('internship_id')->constrained();
+        //     $table->foreignId('student_id')->constrained();
+        //     $table->timestamps();
+        // });
     }
 
     /**
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('students', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('internship_student');
     }
 };
