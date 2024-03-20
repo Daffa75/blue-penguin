@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\StudentResource\Pages;
 use App\Filament\Admin\Resources\StudentResource\RelationManagers;
 use App\Models\Student;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -52,7 +53,21 @@ class StudentResource extends Resource
                     ->email()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
-                Forms\Components\TextInput::make('phone_number')
+                Forms\Components\TextInput::make('phone_number'),
+                Forms\Components\Section::make()
+                ->heading(__('Related User'))
+                ->translateLabel()
+                ->collapsed()
+                ->collapsible()
+                ->description(__('If student have account, Link the account here'))
+                ->schema([
+                    Forms\Components\Select::make('user_id')
+                        ->label(__('User'))
+                        ->searchable()
+                        ->options(
+                            User::all()->pluck('name', 'id')
+                        ),
+                ]),
             ]);
     }
 
