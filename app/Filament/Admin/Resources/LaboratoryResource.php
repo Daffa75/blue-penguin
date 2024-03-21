@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\LaboratoryResource\RelationManagers;
 use App\Filament\Admin\Resources\LaboratoryResource\RelationManagers\LecturersRelationManager;
 use App\Filament\Admin\Resources\LaboratoryResource\RelationManagers\StudentsRelationManager;
 use App\Models\Laboratory;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
@@ -26,7 +27,11 @@ class LaboratoryResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->id==4;
+        $panelId = Filament::getCurrentPanel()->getId();
+        if ($panelId == 'student') {
+            return false;
+        }
+        return true;
     }
     
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;

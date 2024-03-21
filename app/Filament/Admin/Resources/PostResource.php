@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\PostResource\Pages;
 use App\Filament\Admin\Resources\PostResource\RelationManagers;
 use App\Models\Post;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Get;
 use Filament\Forms\Form;
@@ -30,14 +31,19 @@ class PostResource extends Resource
     protected static ?string $model = Post::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    
+    public static function canViewAny(): bool
+    {
+        $panelId = Filament::getCurrentPanel()->getId();
+        if ($panelId == 'student') {
+            return false;
+        }
+        return true;
+    }
+    
     public static function getNavigationGroup(): ?string
     {
         return (__('Website'));
-    }
-
-    public static function canViewAny(): bool
-    {
-        return auth()->user()->id==4;
     }
 
     protected static ?string $recordTitleAttribute = 'title';

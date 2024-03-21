@@ -7,6 +7,7 @@ use App\Filament\Admin\Resources\TeachingStaffResource\RelationManagers;
 use App\Models\Lecturer;
 use App\Models\StaffRole;
 use App\Models\TeachingStaff;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -25,7 +26,11 @@ class TeachingStaffResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->id==4;
+        $panelId = Filament::getCurrentPanel()->getId();
+        if ($panelId == 'student') {
+            return false;
+        }
+        return true;
     }
     
     public static function form(Form $form): Form
