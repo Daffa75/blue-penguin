@@ -21,6 +21,11 @@ class InventarisResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->id==4;
+    }
+    
     public static function form(Form $form): Form
     {
         return $form
@@ -65,6 +70,7 @@ class InventarisResource extends Resource
                             ->collection('inventory/images')
                             ->multiple()
                             ->downloadable()
+                            // ->imageCropAspectRatio('1:1')
                             ->hiddenLabel(),
                     ])
             ]);

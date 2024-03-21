@@ -24,6 +24,11 @@ class LaboratoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-beaker';
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->id==4;
+    }
+    
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function getNavigationGroup(): ?string

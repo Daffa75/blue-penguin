@@ -24,6 +24,11 @@ class UserResource extends Resource
         return ['email', 'name'];
     }
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->id==4;
+    }
+
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         $details = [];
@@ -76,9 +81,9 @@ class UserResource extends Resource
                     ->default('4')
                     ->options([
                         '0' => 'Superadmin',
-                        '1' => 'Admin 1',
+                        '1' => 'Admin',
                         '3' => 'Dosen',
-                        '4' => 'Admin 2',
+                        '4' => 'Mahasiswa',
                     ]),
                 Forms\Components\Select::make('roles')->multiple()->relationship('roles', 'name')->label('Api Role')
 

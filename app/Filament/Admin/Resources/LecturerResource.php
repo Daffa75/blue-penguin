@@ -27,6 +27,11 @@ class LecturerResource extends Resource
         return (__('Lecturer'));
     }
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->id==4;
+    }
+
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [
