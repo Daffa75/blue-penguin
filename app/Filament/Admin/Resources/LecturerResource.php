@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\LecturerResource\Pages;
 use App\Filament\Admin\Resources\LecturerResource\RelationManagers;
 use App\Models\Lecturer;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -22,14 +23,19 @@ class LecturerResource extends Resource
     protected static ?string $model = Lecturer::class;
 
     protected static ?string $recordTitleAttribute = 'name';
+    
+    public static function canViewAny(): bool
+    {
+        $panelId = Filament::getCurrentPanel()->getId();
+        if ($panelId == 'student') {
+            return false;
+        }
+        return true;
+    }
+
     public static function getPluralLabel(): ?string
     {
         return (__('Lecturer'));
-    }
-
-    public static function canViewAny(): bool
-    {
-        return auth()->user()->id==4;
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array

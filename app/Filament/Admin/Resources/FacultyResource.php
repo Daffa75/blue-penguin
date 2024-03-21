@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\FacultyResource\Pages;
 use App\Filament\Admin\Resources\FacultyResource\RelationManagers;
 use App\Models\Faculty;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -21,7 +22,11 @@ class FacultyResource extends Resource
     
     public static function canViewAny(): bool
     {
-        return auth()->user()->id==4;
+        $panelId = Filament::getCurrentPanel()->getId();
+        if ($panelId == 'student') {
+            return false;
+        }
+        return true;
     }
     
     public static function getNavigationGroup(): ?string

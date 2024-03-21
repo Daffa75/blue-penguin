@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\StudentResource\Pages;
 use App\Filament\Admin\Resources\StudentResource\RelationManagers;
 use App\Models\Student;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -22,7 +23,11 @@ class StudentResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->id==4;
+        $panelId = Filament::getCurrentPanel()->getId();
+        if ($panelId == 'student') {
+            return false;
+        }
+        return true;
     }
     
     public static function getGlobalSearchResultDetails(Model $record): array

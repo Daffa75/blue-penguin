@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\StaffRoleResource\Pages;
 use App\Filament\Admin\Resources\StaffRoleResource\RelationManagers;
 use App\Models\StaffRole;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -21,7 +22,11 @@ class StaffRoleResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->id==4;
+        $panelId = Filament::getCurrentPanel()->getId();
+        if ($panelId == 'student') {
+            return false;
+        }
+        return true;
     }
     
     public static function form(Form $form): Form

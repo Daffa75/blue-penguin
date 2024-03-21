@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Filament\Admin\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -19,14 +20,18 @@ class UserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function canViewAny(): bool
+    {
+        $panelId = Filament::getCurrentPanel()->getId();
+        if ($panelId == 'student') {
+            return false;
+        }
+        return true;
+    }
+
     public static function getGloballySearchableAttributes(): array
     {
         return ['email', 'name'];
-    }
-
-    public static function canViewAny(): bool
-    {
-        return auth()->user()->id==4;
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array
@@ -71,9 +76,9 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('password')
                     ->translateLabel()
                     ->password()
-                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                    ->dehydrated(fn($state) => \filled($state))
-                    ->required(fn(string $context): bool => $context === 'create'),
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                    ->dehydrated(fn ($state) => \filled($state))
+                    ->required(fn (string $context): bool => $context === 'create'),
                 Forms\Components\Select::make('role')
                     ->translateLabel()
                     ->native(false)

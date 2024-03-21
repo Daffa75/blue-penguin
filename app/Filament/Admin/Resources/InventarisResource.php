@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\InventarisResource\Pages;
 use App\Filament\Admin\Resources\InventarisResource\RelationManagers;
 use App\Models\Inventaris;
 use App\Models\Lecturer;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
@@ -23,7 +24,11 @@ class InventarisResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()->id==4;
+        $panelId = Filament::getCurrentPanel()->getId();
+        if ($panelId == 'student') {
+            return false;
+        }
+        return true;
     }
     
     public static function form(Form $form): Form
