@@ -20,6 +20,11 @@ class StudentResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->id==4;
+    }
+    
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [

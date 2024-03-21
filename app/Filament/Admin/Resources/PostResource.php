@@ -36,6 +36,11 @@ class PostResource extends Resource
         return (__('Website'));
     }
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->id==4;
+    }
+
     protected static ?string $recordTitleAttribute = 'title';
     protected static ?int $navigationSort = 1;
 

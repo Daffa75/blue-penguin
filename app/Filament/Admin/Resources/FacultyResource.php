@@ -18,6 +18,12 @@ class FacultyResource extends Resource
     protected static ?string $model = Faculty::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-library';
+    
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->id==4;
+    }
+    
     public static function getNavigationGroup(): ?string
     {
         return __('Management');

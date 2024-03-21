@@ -19,6 +19,11 @@ class StaffRoleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()->id==4;
+    }
+    
     public static function form(Form $form): Form
     {
         return $form
