@@ -21,7 +21,8 @@ class PaginationHandler extends Handlers
         $model = static::getEloquentQuery();
 
         $query = QueryBuilder::for($model)
-            ->with('media')
+            // ->with('media')
+            // ->select('slug', 'title', 'article', 'language', 'published_at')
             ->where('status', 'published')
             ->where('published_at', '<=', now())
             ->defaultSort('-published_at')
@@ -29,8 +30,21 @@ class PaginationHandler extends Handlers
             ->allowedSorts($model::$allowedSorts ?? [])
             ->allowedFilters($this::$allowedfilters ?? [])
             ->allowedIncludes($model::$allowedIncludes ?? null)
-            ->paginate(request()->query('per_page'))
+            ->paginate(10)
             ->appends(request()->query());
+
+        foreach ($query as $post) {
+            $thumbnail = $post->media->pluck('original_url')->toArray();
+            $post->thumbnail = $thumbnail;
+            unset($post->media);
+            unset($post->id);
+            unset($post->created_by);
+            unset($post->updated_by);
+            unset($post->created_at);
+            unset($post->updated_at);
+            unset($post->status);
+            unset($post->id);
+        }
 
         return static::getApiTransformer()::collection($query);
     }
