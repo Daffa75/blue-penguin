@@ -1,20 +1,18 @@
 <?php
-
-namespace App\Filament\Admin\Resources\PostResource\Api\Handlers;
+namespace App\Filament\Admin\Resources\EventResource\Api\Handlers;
 
 use Illuminate\Http\Request;
 use Rupadana\ApiService\Http\Handlers;
 use Spatie\QueryBuilder\QueryBuilder;
-use App\Filament\Admin\Resources\PostResource;
+use App\Filament\Admin\Resources\EventResource;
 
 class PaginationHandler extends Handlers
 {
     public static string | null $uri = '/';
-    public static string | null $resource = PostResource::class;
+    public static string | null $resource = EventResource::class;
 
     public static $allowedfilters = ['language'];
-    public static $allowedSorts = ['published_at'];
-
+    public static $allowedSorts = ['date'];
 
     public function handler()
     {
@@ -22,9 +20,7 @@ class PaginationHandler extends Handlers
 
         $query = QueryBuilder::for($model)
             ->with('media')
-            ->where('status', 'published')
-            ->where('published_at', '<=', now())
-            ->defaultSort('-published_at')
+            ->defaultSort('-date')
             ->allowedFields($model::$allowedFields ?? [])
             ->allowedSorts($model::$allowedSorts ?? [])
             ->allowedFilters($this::$allowedfilters ?? [])
