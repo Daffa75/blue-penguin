@@ -18,10 +18,17 @@ class Inventaris extends Model implements HasMedia
     protected $fillable = [
         'lecturer_id',
         'name',
-        'year',
+        'date',
+        'price',
+        'condition',
         'quantity',
         'registration_number',
     ];
+
+    public function getPriceAttribute($value)
+    {
+        return 'Rp' . number_format($value, 0, ',', '.');
+    }
 
     public function lecturer(): BelongsTo
     {
