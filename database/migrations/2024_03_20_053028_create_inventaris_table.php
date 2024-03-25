@@ -15,7 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('lecturer_id')->constrained('lecturers');
             $table->string('name');
-            $table->year('year');
+            $table->date('date');
+            $table->integer('price');
+            $table->enum('condition', ['Baik', 'Rusak Ringan', 'Rusak Berat']); 
             $table->integer('quantity');
             $table->string('registration_number');
             $table->timestamps();

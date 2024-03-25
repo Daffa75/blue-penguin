@@ -30,7 +30,7 @@ class InventarisResource extends Resource
         }
         return true;
     }
-    
+
     public static function form(Form $form): Form
     {
         return $form
@@ -41,31 +41,57 @@ class InventarisResource extends Resource
                             ->label('Nama Barang')
                             ->columnSpan(2)
                             ->required(),
-                        Forms\Components\TextInput::make('registration_number')
-                            ->label('Nomor Seri Departemen')
-                            ->columnSpan(1)
-                            ->required(),
                         Forms\Components\Select::make('lecturer_id')
                             ->label('Dosen')
                             ->searchable()
                             ->required()
-                            ->options(
-                                Lecturer::all()->pluck('name', 'id')
-                            )
+                            ->options(function () {
+                                return Lecturer::whereRaw('CHAR_LENGTH(nip) = 18')
+                                    ->whereRaw('nip REGEXP \'^[0-9]+$\'')
+                                    ->pluck('name', 'id');
+                            })
                             ->columnSpan(1)
                             ->native(false),
-                        Forms\Components\TextInput::make('year')
-                            ->label('Tahun Pembelian')
-                            ->numeric()
+                        Forms\Components\TextInput::make('registration_number')
+                            ->label('Nomor Seri Departemen')
                             ->columnSpan(1)
+                            ->required(),
+                        Forms\Components\DatePicker::make('date')
+                            ->label('Date')
+                            ->columnSpan(1)
+                            ->required(),
+                        Forms\Components\TextInput::make('price')
+                            ->label('Harga')
+                            ->columnSpan(1)
+                            ->numeric()
                             ->required(),
                         Forms\Components\TextInput::make('quantity')
                             ->label('Jumlah Barang')
                             ->columnSpan(1)
                             ->numeric()
                             ->required(),
+                        Forms\Components\Select::make('condition')
+                            ->label('Condition')
+                            ->options([
+                                'Baik' => 'Baik',
+                                'Rusak Ringan' => 'Rusak Ringan',
+                                'Rusak Berat' => 'Rusak Berat',
+                            ])
+                            ->columnSpan(1)
+                            ->required(),
                     ])
-                    ->columns(3),
+                    ->columnSpan(2),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Placeholder::make('created_at')
+                            ->label('Created at')
+                            ->content(fn (Inventaris $record): ?string => $record->created_at?->diffForHumans()),
+                        Forms\Components\Placeholder::make('updated_at')
+                            ->label('Last modified at')
+                            ->content(fn (Inventaris $record): ?string => $record->updated_at?->diffForHumans()),
+                    ])
+                    ->columnSpan(1)
+                    ->hidden(fn (?Inventaris $record) => $record === null),
                 Forms\Components\Section::make('Image')
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('image')
@@ -77,8 +103,9 @@ class InventarisResource extends Resource
                             ->downloadable()
                             // ->imageCropAspectRatio('1:1')
                             ->hiddenLabel(),
-                    ])
-            ]);
+                    ]),
+            ])
+            ->columns(3);
     }
 
     public static function table(Table $table): Table
@@ -97,8 +124,18 @@ class InventarisResource extends Resource
                     ->label('Dosen')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('year')
-                    ->label('Tahun Pembelian')
+                Tables\Columns\TextColumn::make('date')
+                    ->label('Tanggal')
+                    ->searchable()
+                    ->date('d M Y')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('price')
+                    ->label('Harga')
+                    ->searchable()
+                    
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('condition')
+                    ->label('Kondisi')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity')
