@@ -17,12 +17,12 @@ class DetailHandler extends Handlers
     public function handler(Request $request)
     {
         $id = $request->route('id');
-        
-        $model = static::getEloquentQuery();
 
-        $query = QueryBuilder::for(
-            $model->where(static::getKeyName(), $id)->with('media')
-        )
+        $model = static::getEloquentQuery();
+        $query = QueryBuilder::for($model)
+            ->join('users', 'events.created_by', '=', 'users.id')
+            ->select('events.*', 'users.name as author')
+            ->where('events.id', $id) // Specify the table name or alias for the id column
             ->first();
 
         if (!$query) return static::sendNotFoundResponse();

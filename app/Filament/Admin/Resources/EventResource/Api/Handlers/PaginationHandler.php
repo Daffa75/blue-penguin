@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Filament\Admin\Resources\EventResource\Api\Handlers;
 
 use Illuminate\Http\Request;
@@ -19,7 +20,8 @@ class PaginationHandler extends Handlers
         $model = static::getEloquentQuery();
 
         $query = QueryBuilder::for($model)
-            ->with('media')
+            ->join('users', 'events.created_by', '=', 'users.id')
+            ->select('events.*', 'users.name as author')
             ->defaultSort('-date')
             ->allowedFields($model::$allowedFields ?? [])
             ->allowedSorts($model::$allowedSorts ?? [])
