@@ -19,7 +19,8 @@ class ListInternships extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->hidden(auth()->user()->role !== '0'),
             ImportAction::make()
                 ->fields([
                     ImportField::make('nim1'),
@@ -54,7 +55,7 @@ class ListInternships extends ListRecords
                     if (isset($data['nim2'])) {
                         $student2 = Student::where('nim', $data['nim2'])->first();
                         if ($student2) {
-                            $newData['student2_id'] = $student2->id; 
+                            $newData['student2_id'] = $student2->id;
                         }
                     }
 
@@ -65,7 +66,7 @@ class ListInternships extends ListRecords
                         $internship->student()->attach($student1->id);
                     }
 
-                    if (isset($data['nim2']) && $student2) { 
+                    if (isset($data['nim2']) && $student2) {
                         $internship->student()->attach($student2->id);
                     }
 

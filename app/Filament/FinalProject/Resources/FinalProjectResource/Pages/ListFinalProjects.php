@@ -20,6 +20,7 @@ class ListFinalProjects extends ListRecords
     {
         return null;
     }
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
     protected function getHeaderActions(): array
     {
         return [

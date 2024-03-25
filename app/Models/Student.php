@@ -40,4 +40,9 @@ class Student extends Model
     {
         return $this->belongsToMany(Internship::class);
     }
+    public function internshipLogbooks()
+    {
+        return $this->hasMany(InternshipLogbook::class, 'student_id');
+    }
+
 }

@@ -24,14 +24,17 @@ class Internship extends Model
         'start_date',
         'end_date',
     ];
-
-    public function student(): BelongsToMany
-    {
-        return $this->belongsToMany(Student::class);
-    }
-
+    
     public function lecturer(): BelongsTo
     {
         return $this->belongsTo(Lecturer::class);
+    }
+    public function logbooks()
+    {
+        return $this->hasMany(InternshipLogbook::class, 'internship_id');
+    }
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class);
     }
 }
