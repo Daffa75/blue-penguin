@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\EventResource\Api\Transformers\EventTransformer;
 use App\Filament\Admin\Resources\EventResource\Pages;
 use App\Filament\Admin\Resources\EventResource\RelationManagers;
 use App\Models\Event;
@@ -10,22 +11,22 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components;
-use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Tables;
-use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-
 
 class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
+
+    public static function getApiTransformer()
+    {
+        return EventTransformer::class;
+    }
 
     public static function getNavigationGroup(): ?string
     {
@@ -52,7 +53,7 @@ class EventResource extends Resource
                                     ->required()
                                     ->live(onBlur: true)
                                     ->maxLength(255)
-                                    ->afterStateUpdated(fn(string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                                    ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
 
                                 Forms\Components\TextInput::make('slug')
                                     ->disabled()
@@ -62,24 +63,14 @@ class EventResource extends Resource
                                     ->unique(Event::class, 'slug', ignoreRecord: true),
 
                                 Forms\Components\MarkdownEditor::make('description')
+                                    ->disableToolbarButtons(
+                                        ['attachFiles']
+                                    )
                                     ->translateLabel()
-                                    ->fileAttachmentsDirectory('event/attachments')
                                     ->required()
                                     ->columnSpan('full'),
                             ])
                             ->columns(2),
-
-                        Forms\Components\Section::make(__('Image'))
-                            ->schema([
-                                SpatieMediaLibraryFileUpload::make('image')
-                                    ->image()
-                                    ->imageEditor()
-                                    ->imageResizeMode('contain')
-                                    ->imageCropAspectRatio('16:9')
-                                    ->collection('event/images')
-                                    ->hiddenLabel()
-                            ])
-                            ->collapsible(),
                     ])
                     ->columnSpan(['lg' => 2]),
 
@@ -88,7 +79,7 @@ class EventResource extends Resource
                         Forms\Components\Section::make('Option')
                             ->schema([
                                 Forms\Components\DatePicker::make('date')
-                                    
+
                                     ->translateLabel()
                                     ->required(),
 
@@ -111,9 +102,6 @@ class EventResource extends Resource
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image')->collection('event/images')
-                    ->label(__('Image')),
-
                 Tables\Columns\TextColumn::make('title')
                     ->wrap()
                     ->lineclamp(2)
@@ -129,14 +117,13 @@ class EventResource extends Resource
                 Tables\Columns\TextColumn::make('date')
                     ->translateLabel()
                     ->sortable()
-                    ->date('l, d M Y')
-                    ,
+                    ->date('l, d M Y'),
 
                 Tables\Columns\TextColumn::make('language')
                     ->sortable()
                     ->translatelabel()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'en' => 'success',
                         'id' => 'warning',
                     }),
@@ -146,19 +133,19 @@ class EventResource extends Resource
                 Tables\Filters\Filter::make('date')
                     ->form([
                         Forms\Components\DatePicker::make('from')
-                            ->placeholder(fn($state): string => now()->subYear()->format('Y')),
+                            ->placeholder(fn ($state): string => now()->subYear()->format('Y')),
                         Forms\Components\DatePicker::make('until')
-                            ->placeholder(fn($state): string => now()->format('M d, Y')),
+                            ->placeholder(fn ($state): string => now()->format('M d, Y')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
                                 $data['from'] ?? null,
-                                fn(Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('date', '>=', $date),
                             )
                             ->when(
                                 $data['until'] ?? null,
-                                fn(Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('date', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
@@ -205,7 +192,6 @@ class EventResource extends Resource
                                     ->schema([
                                         Components\TextEntry::make('date')
                                             ->translatelabel()
-                                            
                                             ->date('l, d M Y'),
 
                                         Components\Group::make([
@@ -218,9 +204,6 @@ class EventResource extends Resource
                                                 ->label(__('Created by')),
                                         ]),
                                     ]),
-                                Components\ImageEntry::make('image')
-                                    ->hiddenLabel()
-                                    ->grow(false),
                             ])->from('lg'),
                         ]),
                     Components\Section::make(__('Description'))
@@ -233,16 +216,6 @@ class EventResource extends Resource
                         ->collapsible(),
                 ])
                     ->columnSpan(['lg' => 2]),
-
-                Components\Group::make([
-                    Components\Section::make()
-                        ->schema([
-                            SpatieMediaLibraryImageEntry::make('image')
-                                ->hiddenLabel()
-                                ->collection('event/images'),
-                        ]),
-                ])
-                    ->columnSpan(['lg' => 1]),
             ])
             ->columns(['lg' => 3]);
     }
