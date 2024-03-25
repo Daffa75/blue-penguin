@@ -10,30 +10,31 @@ use Illuminate\Http\Request;
 
 class DetailHandler extends Handlers
 {
-    public static string | null $uri = '/{id}';
+    public static string | null $uri = '/{slug}';
     public static string | null $resource = PostResource::class;
 
 
     public function handler(Request $request)
     {
-        $id = $request->route('id');
+        $slug = $request->route('slug');
 
         $model = static::getModel()::query();
 
         $query = QueryBuilder::for(
             $model
-            ->where(static::getKeyName(), $id)
-            ->where('status', 'published')
-            ->where('published_at', '<=', now())
-            ->with('media')
-            ->with('created_by')
+                ->where('slug', $slug)
+                ->where('status', 'published')
+                ->where('published_at', '<=', now())
+                ->with('media')
         )
+            ->join('users', 'posts.created_by', '=', 'users.id')
+            ->select('posts.*', 'users.name as author')
             ->first();
 
         if (!$query) return static::sendNotFoundResponse();
 
         $transformer = static::getApiTransformer();
-        
+
         return new $transformer($query);
     }
 }

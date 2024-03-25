@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\PostResource\Api\Transformers\PostTransformer;
 use App\Filament\Admin\Resources\PostResource\Pages;
 use App\Filament\Admin\Resources\PostResource\RelationManagers;
 use App\Models\Post;
@@ -48,6 +49,11 @@ class PostResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
     protected static ?int $navigationSort = 1;
+
+    public static function getApiTransformer()
+    {
+        return PostTransformer::class;
+    }
 
     public static function form(Form $form): Form
     {
