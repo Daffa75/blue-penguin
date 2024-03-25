@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Resources\LaboratoryResource\Api\Transformers\LaboratoryTransformer;
 use App\Filament\Admin\Resources\LaboratoryResource\Pages;
 use App\Filament\Admin\Resources\LaboratoryResource\RelationManagers;
 use App\Filament\Admin\Resources\LaboratoryResource\RelationManagers\LecturersRelationManager;
@@ -25,6 +26,11 @@ class LaboratoryResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-beaker';
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
+    public static function getApiTransformer()
+    {
+        return LaboratoryTransformer::class;
+    }
 
     public static function getNavigationGroup(): ?string
     {
@@ -70,14 +76,20 @@ class LaboratoryResource extends Resource
 
                 Forms\Components\Section::make('image')
                     ->schema([
-                        SpatieMediaLibraryFileUpload::make('image')
+                        SpatieMediaLibraryFileUpload::make('thumbnail')
+                            ->image()
+                            ->imageEditor()
+                            ->imageResizeMode('contain')
+                            ->imageCropAspectRatio('16:9')
+                            ->collection('laboratory/thumbnail'),
+
+                            SpatieMediaLibraryFileUpload::make('gallery')
                             ->image()
                             ->imageEditor()
                             ->imageResizeMode('contain')
                             ->imageCropAspectRatio('16:9')
                             ->collection('laboratory/images')
-                            ->multiple()
-                            ->hiddenLabel(),
+                            ->multiple(),
                     ]),
             ]);
     }
