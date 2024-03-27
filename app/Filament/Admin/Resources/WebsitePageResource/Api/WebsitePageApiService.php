@@ -1,14 +1,14 @@
 <?php
-namespace App\Filament\Admin\Resources\ContentsResource\Api;
+namespace App\Filament\Admin\Resources\WebsitePageResource\Api;
 
 use Rupadana\ApiService\ApiService;
-use App\Filament\Admin\Resources\ContentsResource;
+use App\Filament\Admin\Resources\WebsitePageResource;
 use Illuminate\Routing\Router;
 
 
-class ContentsApiService extends ApiService
+class WebsitePageApiService extends ApiService
 {
-    protected static string | null $resource = ContentsResource::class;
+    protected static string | null $resource = WebsitePageResource::class;
 
     public static function handlers() : array
     {

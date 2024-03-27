@@ -2,7 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\ContentsResource\Pages;
+use App\Filament\Admin\Resources\WebsitePageResource\Pages;
 use App\Models\WebsitePages;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,12 +11,11 @@ use Filament\Resources\Pages\Page;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components;
 use Filament\Pages\SubNavigationPosition;
 
-class ContentsResource extends Resource
+class WebsitePageResource extends Resource
 {
     protected static ?string $model = WebsitePages::class;
 
@@ -156,8 +155,8 @@ class ContentsResource extends Resource
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
-            Pages\ViewContents::class,
-            Pages\EditContents::class,
+            Pages\ViewWebsitePage::class,
+            Pages\EditWebsitePage::class,
         ]);
     }
 
@@ -171,10 +170,10 @@ class ContentsResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListContents::route('/'),
-            'create' => Pages\CreateContents::route('/create'),
-            'view' => Pages\ViewContents::route('/{record}'),
-            'edit' => Pages\EditContents::route('/{record}/edit'),
+            'index' => Pages\ListWebsitePage::route('/'),
+            'create' => Pages\CreateWebsitePage::route('/create'),
+            'view' => Pages\ViewWebsitePage::route('/{record}'),
+            'edit' => Pages\EditWebsitePage::route('/{record}/edit'),
         ];
     }
 }

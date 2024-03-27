@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Admin\Resources\ContentsResource\Api\Handlers;
+namespace App\Filament\Admin\Resources\WebsitePageResource\Api\Handlers;
 
 use App\Filament\Resources\SettingResource;
-use App\Filament\Admin\Resources\ContentsResource;
+use App\Filament\Admin\Resources\WebsitePageResource;
 use Rupadana\ApiService\Http\Handlers;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Http\Request;
@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class DetailHandler extends Handlers
 {
     public static string | null $uri = '/{slug}';
-    public static string | null $resource = ContentsResource::class;
+    public static string | null $resource = WebsitePageResource::class;
 
     public function handler(Request $request)
     {
