@@ -8,7 +8,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateContents extends CreateRecord
 {
-    protected static string $resource = ContentsResource::class;
+    protected static string $resource = ContentsResource::class;        
 
     protected function getRedirectUrl(): string
     {

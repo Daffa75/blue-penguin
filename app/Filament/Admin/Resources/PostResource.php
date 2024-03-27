@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\PostResource\Api\Transformers\PostTransformer;
 use App\Filament\Admin\Resources\PostResource\Pages;
-use App\Filament\Admin\Resources\PostResource\RelationManagers;
 use App\Models\Post;
 use Filament\Forms;
 use Filament\Forms\Get;
@@ -14,17 +13,15 @@ use Filament\Infolists\Components;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Filament\Resources\Pages\Page;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Pages\SubNavigationPosition;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
-use Filament\Notifications\Notification;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
-use Filament\Tables\Columns\SpatieTagsColumn;
 
 class PostResource extends Resource
 {
@@ -38,6 +35,7 @@ class PostResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
     protected static ?int $navigationSort = 1;
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function getApiTransformer()
     {
@@ -292,6 +290,14 @@ class PostResource extends Resource
                     ->columnSpan(['lg' => 1]),
             ])
             ->columns(['lg' => 3]);
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\ViewPost::class,
+            Pages\EditPost::class,
+        ]);
     }
 
     public static function getRelations(): array

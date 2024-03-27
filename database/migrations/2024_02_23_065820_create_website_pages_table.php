@@ -13,10 +13,17 @@ return new class extends Migration
     {
         Schema::create('website_pages', function (Blueprint $table) {
             $table->id('page_id');
-            $table->timestamps();
             $table->string('page');
-            $table->text('content');
-            $table->string('language');
+            $table->string('slug');
+            $table->text('content_en');
+            $table->text('content_id');
+            $table->foreignId('created_by')->constrained(
+                table: 'users', indexName: 'website_pages_created_by'
+            );
+            $table->foreignId('updated_by')->constrained(
+                table: 'users', indexName: 'website_pages_updated_by'
+            );
+            $table->timestamps();
         });
     }
 

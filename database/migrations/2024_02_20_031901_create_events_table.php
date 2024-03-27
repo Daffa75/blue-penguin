@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->string('slug');
+            $table->string('language');
+            $table->date('date');
+            $table->text('description');
             $table->foreignId('created_by')->constrained(
                 table: 'users', indexName: 'events_created_by'
             );
             $table->foreignId('updated_by')->constrained(
                 table: 'users', indexName: 'events_updated_by'
             );
-            $table->string('title');
-            $table->string('slug');
-            $table->string('language');
-            $table->date('date');
-            $table->text('description');
             $table->timestamps();
         });
     }
