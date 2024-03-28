@@ -39,7 +39,7 @@ class StudentsRelationManager extends RelationManager
                     ->badge()
                     ->colors([
                         'info' => 'Bachelor',
-                        'success' => 'Magister',
+                        'success' => 'Master',
                     ])
                     ->formatStateUsing(fn(string $state): string => (__(ucfirst($state))))
             ])
@@ -54,7 +54,7 @@ class StudentsRelationManager extends RelationManager
                         ->native(false)
                         ->options([
                             'bachelor' => (__('Bachelor')),
-                            'magister' => (__('Magister')),
+                            'master' => (__('Master')),
                         ])
                         ->required(),
                 ])

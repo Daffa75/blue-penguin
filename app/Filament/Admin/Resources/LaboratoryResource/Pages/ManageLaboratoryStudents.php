@@ -43,7 +43,7 @@ class ManageLaboratoryStudents extends ManageRelatedRecords
                     ->badge()
                     ->colors([
                         'info' => 'bachelor',
-                        'success' => 'magister',
+                        'success' => 'master',
                     ])
                     ->formatStateUsing(fn(string $state): string => (__(ucfirst($state))))
             ])
@@ -52,7 +52,7 @@ class ManageLaboratoryStudents extends ManageRelatedRecords
                 ->multiple()
                 ->options([
                     'bachelor' => (__('Bachelor')),
-                    'magister' => (__('Magister')),
+                    'master' => (__('Master')),
                 ]),
             ])
             ->headerActions([
@@ -63,7 +63,7 @@ class ManageLaboratoryStudents extends ManageRelatedRecords
                         ->native(false)
                         ->options([
                             'bachelor' => (__('Bachelor')),
-                            'magister' => (__('Magister')),
+                            'master' => (__('Master')),
                         ])
                         ->required(),
                 ])

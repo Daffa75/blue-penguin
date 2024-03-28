@@ -127,7 +127,7 @@
     "Head" : "Kepala",
     "Staff" : "Staff",
     "Bachelor" : "Sarjana",
-    "Magister" : "Magister",
+    "Master" : "Magister",
     "Event" : "Kegiatan",
     "Laboratory" : "Laboratorium",
     "Page Contents" : "Halaman",
@@ -147,5 +147,14 @@
     "Page Title" : "Judul Halaman",
     "Page" : "Halaman",
     "Last Updated" : "Terakhir Diupdate",
+    "Curriculum Structures" : "Struktur Kurikulum",
+    "Curriculum Structure" : "Struktur Kurikulum",
+    "Curriculum Name" : "Nama Kurikulum",
+    "Semester Name" : "Nama Semester",
+    "Credit Total" : "Total SKS",
+    "Module Code" : "Kode Mata Kuliah",
+    "Module Name" : "Nama Mata Kuliah",
+    "Credit Points" : "SKS",
+    "Module Handbook Link" : "Link Handbook",
     "Date" : "Tanggal"
 }

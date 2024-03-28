@@ -33,7 +33,7 @@ class LaboratoryTransformer extends JsonResource
             return $group->map(function($lecturer) {
                 return [
                     'name' => $lecturer->name,
-                    'nim' => $lecturer->nip,
+                    'nip' => $lecturer->nip,
                     'image_url' => $lecturer->image_url
                 ];
             });
