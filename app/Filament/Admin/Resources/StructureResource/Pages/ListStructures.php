@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Admin\Resources\CurriculumStructure\StructureResource\Pages;
+namespace App\Filament\Admin\Resources\StructureResource\Pages;
 
 use App\Actions\FilamentImport\Action\ImportAction;
-use App\Filament\Admin\Resources\CurriculumStructure\StructureResource;
+use App\Filament\Admin\Resources\StructureResource;
 use App\Models\Curriculum\CurriculumStructure;
 use App\Models\Curriculum\Module;
 use App\Models\Curriculum\Semester;

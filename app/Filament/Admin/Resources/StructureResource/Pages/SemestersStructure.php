@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Admin\Resources\CurriculumStructure\StructureResource\Pages;
+namespace App\Filament\Admin\Resources\StructureResource\Pages;
 
-use App\Filament\Admin\Resources\CurriculumStructure\StructureResource;
+use App\Filament\Admin\Resources\StructureResource;
 use App\Filament\Tables\Columns\CurriculumsList;
 use App\Models\Curriculum\CurriculumStructure;
 use App\Models\Curriculum\Module;

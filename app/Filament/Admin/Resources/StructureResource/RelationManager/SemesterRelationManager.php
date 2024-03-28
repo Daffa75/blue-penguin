@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Filament\Admin\Resources\CurriculumStructure\StructureResource\RelationManagers;
+namespace App\Filament\Admin\Resources\StructureResource\RelationManagers;
 
-use App\Filament\Admin\Resources\CurriculumStructure\SemesterResource;
 use App\Models\Curriculum\Module;
 use App\Models\Curriculum\Semester;
 use Filament\Forms;
@@ -10,8 +9,6 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SemesterRelationManager extends RelationManager
 {

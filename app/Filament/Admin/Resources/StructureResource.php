@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Filament\Admin\Resources\CurriculumStructure;
+namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\CurriculumStructure\StructureResource\Pages;
-use App\Filament\Admin\Resources\CurriculumStructure\SemesterResource;
-use App\Filament\Admin\Resources\CurriculumStructure\StructureResource\RelationManagers\SemesterRelationManager;
+use App\Filament\Admin\Resources\StructureResource\Api\Transformers\StructureTransformer;
+use App\Filament\Admin\Resources\StructureResource\Pages;
+use App\Filament\Admin\Resources\StructureResource\RelationManagers\SemesterRelationManager;
 use App\Models\Curriculum\CurriculumStructure;
 use App\Models\Curriculum\Semester;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms;
-use Filament\Forms\Components\Repeater;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -27,6 +25,11 @@ class StructureResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
+    public static function getApiTransformer()
+    {
+        return StructureTransformer::class;
+    }
 
     public static function getNavigationGroup(): ?string
     {
@@ -52,6 +55,7 @@ class StructureResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('curriculum_name')
                                     ->label('Curriculum Structure')
+                                    ->translateLabel()
                                     ->required()
                                     ->maxLength(64),
 
@@ -94,6 +98,7 @@ class StructureResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('curriculum_name')
                     ->label('Curriculum Name')
+                    ->translateLabel()
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('language')
