@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Filament\Admin\Clusters\Staffs;
 use App\Filament\Admin\Resources\StaffRoleResource\Pages;
 use App\Filament\Admin\Resources\StaffRoleResource\RelationManagers;
 use App\Models\StaffRole;
@@ -18,6 +19,15 @@ class StaffRoleResource extends Resource
     protected static ?string $model = StaffRole::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $cluster = Staffs::class;
+
+    protected static ?int $navigationSort = 3;
+
+    public static function getPluralLabel(): ?string
+    {
+        return __('Staff Role');
+    }
 
     public static function form(Form $form): Form
     {

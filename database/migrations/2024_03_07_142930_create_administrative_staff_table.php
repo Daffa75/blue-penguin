@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('administrative_staff', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('position_en');
-            $table->string('position_idn');
+            $table->string('role_id');
             $table->string('email');
             $table->timestamps();
         });
