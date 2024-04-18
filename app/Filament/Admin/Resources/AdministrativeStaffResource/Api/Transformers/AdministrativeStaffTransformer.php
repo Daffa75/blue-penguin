@@ -1,9 +1,9 @@
 <?php
-namespace App\Filament\Admin\Resources\TeachingStaffResource\Api\Transformers;
+namespace App\Filament\Admin\Resources\AdministrativeStaffResource\Api\Transformers;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TeachingStaffTransformer extends JsonResource
+class AdministrativeStaffTransformer extends JsonResource
 {
 
     /**
@@ -15,15 +15,12 @@ class TeachingStaffTransformer extends JsonResource
     public function toArray($request)
     {
         return [
-            'name' => $this->lecturer->name,
-            'nip' => $this->lecturer->nip,
+            'id' => $this->id,
+            'name' => $this->name,
             'email' => $this->email,
             'role_en' => $this->role->role_en,
             'role_idn' => $this->role->role_idn,
-            'expertise_en' => $this->expertise_en,
-            'expertise_idn' => $this->expertise_idn,
-            'link' => $this->link,
-            'image' => $this->lecturer->image_url,
+            'image' => $this->media->pluck('original_url')->first(),
         ];
     }
 }

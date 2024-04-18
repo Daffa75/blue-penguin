@@ -15,7 +15,7 @@ class Staffs extends Cluster
 
     public static function getPluralLabel(): ?string
     {
-        return __('Staffs');
+        return __('Staff');
     }
 
     protected static ?int $navigationSort = 5;

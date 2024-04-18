@@ -47,7 +47,7 @@ class TeachingStaffResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('lecturer_id')
                             ->label('Lecturer')
-                            ->unique()
+                            ->disabledOn('edit')
                             ->translateLabel()
                             ->options(Lecturer::all()->pluck('name', 'id'))
                             ->searchable()
@@ -81,6 +81,11 @@ class TeachingStaffResource extends Resource
                             ->translateLabel()
                             ->required()
                             ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->translateLabel()
+                            ->required()
+                            ->maxLength(255),
                         Forms\Components\TextInput::make('link')
                             ->label('Handbook Link')
                             ->translateLabel()
@@ -102,12 +107,12 @@ class TeachingStaffResource extends Resource
                 Tables\Columns\TextColumn::make('lecturer.name')
                     ->translateLabel()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('role.role_en')
+                Tables\Columns\TextColumn::make('role.role_idn')
                     ->label('Position')
                     ->translateLabel()
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('expertise')
+                Tables\Columns\TextColumn::make('expertise_idn')
                     ->searchable()
             ])
             ->filters([

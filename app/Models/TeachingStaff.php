@@ -16,7 +16,8 @@ class TeachingStaff extends Model
         'role_id',
         'expertise_en',
         'expertise_idn',
-        'link'
+        'link',
+        'email'
     ];
 
     public function lecturer(): BelongsTo

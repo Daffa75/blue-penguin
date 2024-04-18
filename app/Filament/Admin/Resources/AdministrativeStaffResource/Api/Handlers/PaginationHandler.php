@@ -16,6 +16,7 @@ class PaginationHandler extends Handlers {
         $model = static::getEloquentQuery();
 
         $query = QueryBuilder::for($model)
+        ->with('media')
         ->allowedFields($model::$allowedFields ?? [])
         ->allowedSorts($model::$allowedSorts ?? [])
         ->allowedFilters($model::$allowedFilters ?? [])

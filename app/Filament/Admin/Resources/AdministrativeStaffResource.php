@@ -3,6 +3,7 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Clusters\Staffs;
+use App\Filament\Admin\Resources\AdministrativeStaffResource\Api\Transformers\AdministrativeStaffTransformer;
 use App\Filament\Admin\Resources\AdministrativeStaffResource\Pages;
 use App\Filament\Admin\Resources\AdministrativeStaffResource\RelationManagers;
 use App\Models\AdministrativeStaff;
@@ -32,6 +33,10 @@ class AdministrativeStaffResource extends Resource
     public static function getPluralLabel(): ?string
     {
         return __('Administrative Staff');
+    }
+
+    public static function getApiTransformer() { 
+        return AdministrativeStaffTransformer::class; 
     }
 
     public static function form(Form $form): Form

@@ -10,6 +10,11 @@ class EditTeachingStaff extends EditRecord
 {
     protected static string $resource = TeachingStaffResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function getHeaderActions(): array
     {
         return [
