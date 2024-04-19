@@ -2,6 +2,7 @@
 
 namespace App\Filament\Publication\Resources\PublicationResource\RelationManagers;
 
+use Filament\Facades\Filament;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -28,10 +29,12 @@ class StudentsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\AttachAction::make()
-                ->modalHeading(__('Attach Student')),
+                ->modalHeading(__('Attach Student'))
+                ->disabled(fn () => Filament::getCurrentPanel()->getId() === 'student'),
             ])
             ->actions([
-                Tables\Actions\DetachAction::make(),
+                Tables\Actions\DetachAction::make()
+                ->disabled(fn () => Filament::getCurrentPanel()->getId() === 'student'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
