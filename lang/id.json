@@ -156,6 +156,11 @@
     "Module Name" : "Nama Mata Kuliah",
     "Credit Points" : "SKS",
     "Module Handbook Link" : "Link Handbook",
-    "Staff" : "SDM",
-    "Date" : "Tanggal"
+    "Date" : "Tanggal",
+    "Company" : "Perusahaan",
+    "Location" : "Lokasi",
+    "Start Date" : "Tanggal Mulai",
+    "Job Description" : "Deskripsi Pekerjaan",
+    "Supervisor Name" : "Nama Pembimbing",
+    "End Date" : "Tanggal Selesai"
 }
