@@ -43,13 +43,21 @@ class FinalProjectStudentApexChart extends ApexChartWidget
     }
     protected int | string | array $columnSpan = 'full';
 
-    public function getStudentFinalProject() {
+    public function getStudentFinalProject()
+    {
         $projects = FinalProject::where('status', 'Ongoing')
-            ->with('student:id,name')
+            ->with('student:id,name,nim')
             ->orderBy('submitted_at')
             ->get();
         return $projects->map(function ($result) {
-            $diffDays = now()->diffInDays(Carbon::createFromFormat('Y-m-d',$result->submitted_at));
+            $studentNIM = $result->student->nim;
+            $diffDays = now()->diffInDays(Carbon::createFromFormat('Y-m-d', $result->submitted_at));
+
+            if (substr($studentNIM, 0, 4) === 'D121' || substr($studentNIM, 0, 4) === 'D421') {
+                $labelColor = '#9ca3af';
+            } else {
+                $labelColor = '#037ffc';
+            }
 
             if ($diffDays >= 540) {
                 $color = '#ff0000';
@@ -63,6 +71,7 @@ class FinalProjectStudentApexChart extends ApexChartWidget
                 'days' => $diffDays,
                 'name' => $result->student->name,
                 'color' => $color,
+                'labelColor' => $labelColor,
             ];
         });
     }
@@ -104,6 +113,7 @@ class FinalProjectStudentApexChart extends ApexChartWidget
         $data = $finalProjects->pluck('days')->toArray();
         $labels = $finalProjects->pluck('name')->toArray();
         $colors = $finalProjects->pluck('color')->toArray();
+        $labelColors = $finalProjects->pluck('labelColor')->toArray();
 
         $this->height = 33.65 * count($data) + 312;
 
@@ -134,20 +144,26 @@ class FinalProjectStudentApexChart extends ApexChartWidget
                 'labels' => [
                     'style' => [
                         'fontFamily' => 'inherit',
+                        'colors' => $labelColors,
                     ],
                 ],
             ],
             'legend' => [
                 'customLegendItems' => [
+                    __('Bachelor Students'),
+                    __('Master Students'),
                     __('Less than 180 days'),
                     __('Between 180 to 540 days'),
-                    __('More than 540 days')
+                    __('More than 540 days'),
                 ],
                 'markers' => [
                     'fillColors' => [
+                        '#9ca3af',
+                        '#037ffc',
                         '#00ff2f',
                         '#facc15',
                         '#ff0000',
+
                     ]
                 ],
             ],

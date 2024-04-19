@@ -2,19 +2,19 @@
 
 namespace App\Filament\Admin\Pages;
 
-use App\Filament\Widgets;
+use App\Filament\Widgets\FinalProjectLecturerGraph;
 use Filament\Pages\Page;
 
-class FinalProjectGraph extends Page
+class LecturerGraph extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-bar';
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
+    protected static ?int $navigationSort = 2;
 
     protected static string $view = 'filament.admin.pages.final-project-graph';
     protected static ?string $title = '';
     public static function getNavigationLabel(): string
     {
-        return __('Final Project Chart');
+        return __('Mentoring Chart');
     }
 
     protected static ?string $navigationGroup = 'Statistics';
@@ -26,7 +26,7 @@ class FinalProjectGraph extends Page
     protected function getHeaderWidgets(): array
     {
         return [
-            Widgets\FinalProjectStudentApexChart::class,
+            FinalProjectLecturerGraph::class,
         ];
     }
 }
