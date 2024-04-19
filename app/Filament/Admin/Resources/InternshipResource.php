@@ -6,7 +6,7 @@ use App\Filament\Admin\Resources\InternshipResource\Pages;
 use App\Models\Internship;
 use App\Models\InternshipStudents;
 use App\Filament\Admin\Resources\InternshipResource\RelationManagers;
-use App\Filament\Publication\Resources\PublicationResource\RelationManagers\StudentsRelationManager;
+use App\Filament\Lecturer\Resources\PublicationResource\RelationManagers\StudentsRelationManager;
 use App\Models\Lecturer;
 use App\Models\Student;
 use Filament\Facades\Filament;

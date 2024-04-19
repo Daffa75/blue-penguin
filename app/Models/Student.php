@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Student extends Model
 {
@@ -39,7 +40,7 @@ class Student extends Model
     {
         return $this->belongsToMany(Internship::class);
     }
-    public function internshipLogbooks()
+    public function internshipLogbooks(): HasMany
     {
         return $this->hasMany(InternshipLogbook::class, 'student_id');
     }

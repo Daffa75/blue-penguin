@@ -66,9 +66,9 @@ class UserResource extends Resource
                 Forms\Components\TextInput::make('password')
                     ->translateLabel()
                     ->password()
-                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                    ->dehydrated(fn($state) => \filled($state))
-                    ->required(fn(string $context): bool => $context === 'create'),
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                    ->dehydrated(fn ($state) => \filled($state))
+                    ->required(fn (string $context): bool => $context === 'create'),
                 Forms\Components\Select::make('role')
                     ->translateLabel()
                     ->native(false)
@@ -76,7 +76,7 @@ class UserResource extends Resource
                     ->default('4')
                     ->options([
                         '0' => 'Superadmin',
-                        '1' => 'Admin 1',
+                        '1' => 'Admin',
                         '3' => 'Dosen',
                         '4' => 'Mahasiswa',
                     ]),
@@ -110,7 +110,16 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('role')
+                    ->native(false)
+                    ->label(__('Role'))
+                    ->options([
+                        '0' => 'Superadmin',
+                        '1' => 'Admin',
+                        '3' => 'Dosen',
+                        '4' => 'Mahasiswa',
+                    ])
+                    ->default('3')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
