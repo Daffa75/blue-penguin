@@ -13,7 +13,7 @@ class StatsOverview extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make((__('Final Project')), FinalProject::count()),
+            view('filament.widgets.stats-overview-custom'),
             Stat::make((__('Journal')), Publication::where('type' , '=', 'jurnal')->count()),
             Stat::make((__('Proceeding')), Publication::where('type', '=', 'prosiding')->count()),
             Stat::make((__('Service')), Publication::where('type', '=', 'pengabdian')->count()),
