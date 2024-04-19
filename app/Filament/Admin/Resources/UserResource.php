@@ -78,7 +78,7 @@ class UserResource extends Resource
                         '0' => 'Superadmin',
                         '1' => 'Admin 1',
                         '3' => 'Dosen',
-                        '4' => 'Admin 2',
+                        '4' => 'Mahasiswa',
                     ]),
                 Forms\Components\Select::make('roles')->multiple()->relationship('roles', 'name')->label('Api Role')
 

@@ -42,4 +42,12 @@ class Lecturer extends Model
     // {
     //     return $this->belongsTo(TeachingStaff::class);
     // }
+    public function internships()
+    {
+        return $this->hasMany(Internship::class, 'lecturer_id');
+    }
+    public function inventaris()
+    {
+        return $this->hasMany(Inventaris::class, 'lecturer_id');
+    }
 }
