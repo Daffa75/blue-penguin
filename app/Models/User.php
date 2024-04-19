@@ -72,21 +72,17 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'profile_photo_url',
     ];
 
-    public function lecturer(): HasOne
-    {
-        return $this->hasOne(Lecturer::class);
-    }
-
     public function canAccessPanel(Panel $panel): bool
     {
         if ($panel->getId() == 'admin'){
             return in_array($this->role, array('0','superadmin'));
-        } elseif ($panel->getId() == 'publication') {
+        } elseif ($panel->getId() == 'lecturer') {
             return in_array($this->role, array('0','1','2','3','4'));
         } elseif ($panel->getId() == 'finalProject') {
             return in_array($this->role, array('0','1','2','3','4'));
-        }
-
+        } elseif ($panel->getId() == 'student') {
+            return in_array($this->role, array('4'));
+        } 
         return false;
     }
 
@@ -108,5 +104,15 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     public function post(): HasMany
     {
         return $this->hasMany(Post::class);
+    }
+ 
+    public function lecturer(): HasOne
+    {
+        return $this->hasOne(Lecturer::class);
+    }
+
+    public function student(): HasOne
+    {
+        return $this->hasOne(Student::class);
     }
 }
