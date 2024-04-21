@@ -8,24 +8,24 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
-class FinalProjectStudentApexChart extends ApexChartWidget
+class FinalProjectStudentS2ApexChart extends ApexChartWidget
 {
     /**
      * Chart Id
      *
      * @var string
      */
-    protected static string $chartId = 'finalProjectStudentApexChart';
+    protected static string $chartId = 'finalProjectStudentS2ApexChart';
 
     /**
      * Widget Title
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Final Project Graph';
+    protected static ?string $heading = 'Final Project Master Graph';
     protected function getHeading(): ?string
     {
-        return __('Final Project Graph');
+        return __('Final Project Master Graph');
     }
 
     public int $height = 3240;
@@ -48,16 +48,13 @@ class FinalProjectStudentApexChart extends ApexChartWidget
         $projects = FinalProject::where('status', 'Ongoing')
             ->with('student:id,name,nim')
             ->orderBy('submitted_at')
-            ->get();
-        return $projects->map(function ($result) {
-            $studentNIM = $result->student->nim;
-            $diffDays = now()->diffInDays(Carbon::createFromFormat('Y-m-d', $result->submitted_at));
+            ->get()
+            ->filter(function ($project) {
+                return !preg_match('/^(D121|D421)/', $project->student->nim);
+            });
 
-            if (substr($studentNIM, 0, 4) === 'D121' || substr($studentNIM, 0, 4) === 'D421') {
-                $labelColor = '#9ca3af';
-            } else {
-                $labelColor = '#037ffc';
-            }
+        return $projects->map(function ($result) {
+            $diffDays = now()->diffInDays(Carbon::createFromFormat('Y-m-d', $result->submitted_at));
 
             if ($diffDays >= 540) {
                 $color = '#ff0000';
@@ -71,7 +68,6 @@ class FinalProjectStudentApexChart extends ApexChartWidget
                 'days' => $diffDays,
                 'name' => $result->student->name,
                 'color' => $color,
-                'labelColor' => $labelColor,
             ];
         });
     }
@@ -113,7 +109,6 @@ class FinalProjectStudentApexChart extends ApexChartWidget
         $data = $finalProjects->pluck('days')->toArray();
         $labels = $finalProjects->pluck('name')->toArray();
         $colors = $finalProjects->pluck('color')->toArray();
-        $labelColors = $finalProjects->pluck('labelColor')->toArray();
 
         $this->height = 33.65 * count($data) + 312;
 
@@ -144,22 +139,17 @@ class FinalProjectStudentApexChart extends ApexChartWidget
                 'labels' => [
                     'style' => [
                         'fontFamily' => 'inherit',
-                        'colors' => $labelColors,
                     ],
                 ],
             ],
             'legend' => [
                 'customLegendItems' => [
-                    __('Bachelor Students'),
-                    __('Master Students'),
                     __('Less than 180 days'),
                     __('Between 180 to 540 days'),
                     __('More than 540 days'),
                 ],
                 'markers' => [
                     'fillColors' => [
-                        '#9ca3af',
-                        '#037ffc',
                         '#00ff2f',
                         '#facc15',
                         '#ff0000',

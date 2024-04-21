@@ -5,7 +5,7 @@ namespace App\Filament\Admin\Pages;
 use App\Filament\Widgets;
 use Filament\Pages\Page;
 
-class FinalProjectGraph extends Page
+class FinalProjectS1Graph extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-bar';
     protected static ?int $navigationSort = 1;
@@ -14,7 +14,7 @@ class FinalProjectGraph extends Page
     protected static ?string $title = '';
     public static function getNavigationLabel(): string
     {
-        return __('Final Project Chart');
+        return __('Final Project Bachelor Graph');
     }
 
     protected static ?string $navigationGroup = 'Statistics';
@@ -26,7 +26,7 @@ class FinalProjectGraph extends Page
     protected function getHeaderWidgets(): array
     {
         return [
-            Widgets\FinalProjectStudentApexChart::class,
+            Widgets\FinalProjectStudentS1ApexChart::class,
         ];
     }
 }
