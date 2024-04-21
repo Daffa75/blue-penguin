@@ -156,41 +156,109 @@ class LogbookFinalProject extends ManageRelatedRecords
 
         // add title
         $section = $phpWord->addSection();
+        $cellHCentered = array('alignment' => 'center');
+        $cellVCentered = array('valign' => 'center');
 
         $section->addText(
             'kartu bimbingan skripsi',
             array('size' => 14, 'lineHeight' => 2.0, 'allCaps' => true),
-            array('alignment' => 'center')
+            $cellHCentered
         );
 
         $section->addText(
             'Prodi ' . $degree . ' Teknik Informatika Universitas Hasanuddin',
             array('lineHeight' => 2.0),
-            array('alignment' => 'center')
+            $cellHCentered
         );
 
         $table = $section->addTable([
             'borderSize' => 6,
-            'borderColor' => '000000'
+            'borderColor' => '000000',
         ]);
 
         $table->addRow();
-        $table->addCell(3000)->addText('Stb.', null, array('alignment' => 'center'));
-        $table->addCell(7000)->addText('Nama Mahasiswa', null, array('alignment' => 'center'));
+        $table->addCell(3000)->addText('Stb.', null, $cellHCentered);
+        $table->addCell(7000)->addText('Nama Mahasiswa', null, $cellHCentered);
 
         $table->addRow();
         $table->addCell(3000)->addText($student->nim);
         $table->addCell(7000)->addText($student->name);
 
-        $section->addText('');
+        $section->addTextBreak(1);
+
+        $table = $section->addTable([
+            'borderSize' => 6,
+            'borderColor' => '000000'
+        ]);
+        $table->addRow();
+        $table->addCell(2000, $cellVCentered)->addText('Pembimbing', null, $cellHCentered);
+        $table->addCell(4000, $cellVCentered)->addText('Nama Pembimbing', null, $cellHCentered);
+        $table->addCell(5000, $cellVCentered)->addText("Paraf dan Tgl. Persetujuan Ujian Akhir", null, $cellHCentered);
+
+        $table->addRow(1000);
+        // use foreach to add supervisor
+        $supervisorOne = $student->finalProject->lecturers->where('pivot.role', 'supervisor 1');
+        foreach ($supervisorOne as $supervisor) {
+            $table->addCell(2000, $cellVCentered)->addText('I', null, $cellHCentered);
+            $table->addCell(4000, $cellVCentered)->addText($supervisor->name, null, $cellHCentered);
+            $table->addCell(5000);
+        }
+        
+        $supervisorTwo = $student->finalProject->lecturers->where('pivot.role', 'supervisor 2');
+        
+        if($supervisorTwo->count() > 0) {
+            $table->addRow(1000);
+            foreach ($supervisorTwo as $supervisor) {
+                $table->addCell(2000, $cellVCentered)->addText('II', null, $cellHCentered);
+                $table->addCell(4000, $cellVCentered)->addText($supervisor->name, null, $cellHCentered);
+                $table->addCell(5000);
+            }
+        }
 
         $table->addRow();
-        $table->addCell(2000)->addText('Pembimbing', null, array('alignment' => 'center'));
-        $table->addCell(4000)->addText('Nama Pembimbing', null, array('alignment' => 'center'));
-        $table->addCell(4000)->addText('Paraf & Tgl. Persetujuan Ujian Akhir', null, array('alignment' => 'center'));
+        $table->addCell(10000, array("gridSpan" => 3))->addText('No. SK Pembimbing');
 
+        // final project title
+        $section->addTextBreak(1);
+        
+        $table = $section->addTable([
+            'borderSize' => 6,
+            'borderColor' => '000000',
+        ]);
+        $table->addRow();
+        $table->addCell(3000, $cellVCentered)->addText('Judul Skripsi', null, $cellHCentered);
+        $table->addCell(7000)->addText($student->finalProject->title, array('allCaps' => true));
 
+        // activity log
+        $section->addTextBreak(1);
+        
+        $table = $section->addTable([
+            'borderSize' => 6,
+            'borderColor' => '000000',
+        ]);
 
+        $table->addRow();
+        $table->addCell(1000, $cellVCentered)->addText('No.', null, $cellHCentered);
+        $table->addCell(3000, $cellVCentered)->addText('Tanggal Bimbingan.', null, $cellHCentered);
+        $table->addCell(5000, $cellVCentered)->addText('Uraian Kegiatan.', null, $cellHCentered);
+        $table->addCell(2000, $cellVCentered)->addText('Paraf Pemb.', null, $cellHCentered);
+        
+        $logbooks = $student->finalProject->logbooks->sortBy('date');
+
+        $i = 1;
+        foreach ($logbooks as $logbook) {
+            $date = explode(', ', static::idDateFormat($logbook->date, true));
+            $activity = explode("\n", $logbook->activity);
+
+            $table->addRow();
+            $table->addCell(1000, $cellVCentered)->addText($i++, null, $cellHCentered);
+            $table->addCell(2000, $cellVCentered)->addText($date[0] . ',' . "</w:t><w:br/><w:t>" . $date[1], null, $cellHCentered);
+            $activityCell = $table->addCell(5000);
+            foreach ($activity as $line) {
+                $activityCell->addText($line);
+            }
+            $table->addCell(2000, $cellVCentered);
+        }
 
         $fileName = 'logbook_final_project_' . $student->nim . '.docx';
         $tempFile = tempnam(sys_get_temp_dir(), 'word_doc') . '.docx';
@@ -204,5 +272,41 @@ class LogbookFinalProject extends ManageRelatedRecords
         );
 
         return $response;
+    }
+
+    protected static function idDateFormat($date, $print_day = false)
+    {
+        $day = array(
+            1 =>    'Senin',
+            'Selasa',
+            'Rabu',
+            'Kamis',
+            'Jumat',
+            'Sabtu',
+            'Minggu'
+        );
+
+        $month = array(
+            1 =>   'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        );
+        $split = explode('-', $date);
+        $indoDateFormat = $split[2] . ' ' . $month[(int)$split[1]] . ' ' . $split[0];
+
+        if ($print_day) {
+            $num = date('N', strtotime($date));
+            return $day[$num] . ', ' . $indoDateFormat;
+        }
+        return $indoDateFormat;
     }
 }
