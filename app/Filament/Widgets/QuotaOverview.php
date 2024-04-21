@@ -21,23 +21,32 @@ class QuotaOverview extends BaseWidget
   {
     $lecturer = auth()->user()->lecturer;
 
-    $quota = $lecturer->quota;
+    if ($lecturer) {
 
-    $finalProjectCount = FinalProject::where('status', 'Ongoing')
-      ->whereHas('lecturers', function (Builder $query) {
-        $query->where('nip', auth()->user()->lecturer?->nip)
-          ->whereIn('role', ['supervisor 1', 'supervisor 2']);
-      })->count();
 
-    $remainingQuota = $quota - $finalProjectCount;
+      $quota = $lecturer->quota;
 
-    $color = $remainingQuota <= 0 ? 'danger' : ($remainingQuota < 5 ? 'warning' : 'okay');
+      $finalProjectCount = FinalProject::where('status', 'Ongoing')
+        ->whereHas('lecturers', function (Builder $query) {
+          $query->where('nip', auth()->user()->lecturer?->nip)
+            ->whereIn('role', ['supervisor 1', 'supervisor 2']);
+        })->count();
 
-    $description = '';
-    if ($remainingQuota <= 0) {
-      $description = __('Your supervising quota is full');
-    } elseif ($remainingQuota < 5) {
-      $description = __('Your supervising quota is almost full');
+      $remainingQuota = $quota - $finalProjectCount;
+
+      $color = $remainingQuota <= 0 ? 'danger' : ($remainingQuota < 5 ? 'warning' : 'okay');
+
+      $description = '';
+      if ($remainingQuota <= 0) {
+        $description = __('Your supervising quota is full');
+      } elseif ($remainingQuota < 5) {
+        $description = __('Your supervising quota is almost full');
+      }
+    } else {
+      $quota = 0;
+      $remainingQuota = 0;
+      $color = 'danger';
+      $description = __('You are not logged in as a lecturer');
     }
 
     return [
@@ -47,6 +56,5 @@ class QuotaOverview extends BaseWidget
         ->descriptionColor($color)
         ->description($description),
     ];
-    
   }
 }

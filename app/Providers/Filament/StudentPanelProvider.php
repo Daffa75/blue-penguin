@@ -4,7 +4,6 @@ namespace App\Providers\Filament;
 
 use App\Filament\Auth\CustomLogin;
 use App\Filament\Student\Pages\Auth\CustomProfile;
-use App\Filament\Student\Pages\Dashboard;
 use App\Filament\Widgets\AccountOverviewCustom;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -28,8 +27,12 @@ class StudentPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
+            ->brandLogo(asset('assets/images/logo.png'))
+            ->brandLogoHeight('2.5rem')
+            ->favicon(asset('favicon.ico'))
             ->id('student')
-            ->path('student')
+            ->path('mahasiswa')
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -38,11 +41,9 @@ class StudentPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Student/Resources'), for: 'App\\Filament\\Student\\Resources')
             ->resources([
                 \App\Filament\Admin\Resources\InternshipResource::class,
+                \App\Filament\Lecturer\Resources\FinalProjectResource::class,
             ])
             ->discoverPages(in: app_path('Filament/Student/Pages'), for: 'App\\Filament\\Student\\Pages')
-            ->pages([
-                Dashboard::class,
-            ])
             ->discoverWidgets(in: app_path('Filament/Student/Widgets'), for: 'App\\Filament\\Student\\Widgets')
             ->widgets([
                 AccountOverviewCustom::class,
@@ -64,6 +65,7 @@ class StudentPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->viteTheme('resources/css/filament/admin/theme.css');
     }
 }
