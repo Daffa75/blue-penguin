@@ -13,4 +13,8 @@ class CreateFinalProject extends CreateRecord
     {
         return (__('Make Final Project'));
     }
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+    }
 }

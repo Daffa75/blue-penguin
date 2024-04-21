@@ -21,17 +21,20 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
+use Filament\Infolists\Components;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
 
 class FinalProjectS2Resource extends Resource
 {
     protected static ?string $model = FinalProject::class;
     protected static ?string $recordTitleAttribute = 'title';
     protected static ?string $navigationIcon = 'phosphor-article-bold';
+    protected static ?string $slug = 'final-projects-s2';
 
-    public static function getSlug(): string
-    {
-        return 'final-projects-s2';
-    }
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function getNavigationGroup(): ?string
     {
@@ -145,7 +148,7 @@ class FinalProjectS2Resource extends Resource
     {
         return $table
             ->recordAction(null)
-            ->recordUrl(null)
+            // ->recordUrl(null)
             ->searchPlaceholder(__('Search Name, NIM, or Title '))
             ->defaultSort('submitted_at')
             ->columns([
@@ -327,6 +330,10 @@ class FinalProjectS2Resource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('logbook')
+                    ->label('Logbook')
+                    // ->color('dark')
+                    ->url(fn (FinalProject $record) => ("final-projects-s2/{$record->id}/logbook"))
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -336,6 +343,40 @@ class FinalProjectS2Resource extends Resource
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),
             ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Components\Section::make()
+                    ->schema([
+                        Components\Grid::make()
+                            ->schema([
+                                Components\TextEntry::make('student.name')
+                                    ->label(__('Name'))
+                                    ->size(TextEntry\TextEntrySize::Large)
+                                    ->weight(FontWeight::SemiBold),
+                                Components\TextEntry::make('student.nim')
+                                    ->label('NIM')
+                                    ->size(TextEntry\TextEntrySize::Large)
+                                    ->weight(FontWeight::SemiBold),
+                            ]),
+                        Components\TextEntry::make('title')
+                            ->label(__('Title'))
+                            ->size(TextEntry\TextEntrySize::Large)
+                            ->weight(FontWeight::SemiBold),
+                    ])
+            ]);
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\ViewFinalProjectS2::class,
+            Pages\EditFinalProjectS2::class,
+            Pages\LogbookFinalProjectS2::class
+        ]);
     }
 
     public static function getRelations(): array
@@ -350,7 +391,9 @@ class FinalProjectS2Resource extends Resource
         return [
             'index' => Pages\ListFinalProjectS2::route('/'),
             'create' => Pages\CreateFinalProjectS2::route('/create'),
+            'view' => Pages\ViewFinalProjectS2::route('/{record}'),
             'edit' => Pages\EditFinalProjectS2::route('/{record}/edit'),
+            'logbook' => Pages\LogbookFinalProjectS2::route('/{record}/logbook'),
         ];
     }
 }

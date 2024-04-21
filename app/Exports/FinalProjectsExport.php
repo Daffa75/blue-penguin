@@ -20,11 +20,16 @@ class FinalProjectsExport implements FromView, WithEvents, Responsable
 
     public function __construct($data, $url)
     {
-        $this->fileName = now()->format('Y-m-d_his') . '-inventaris.xlsx';
+        $this->url = $url;
+
+        if ($url == 'final-projects') {
+            $this->fileName = now()->format('Y-m-d_his') . '-final_projects.xlsx';
+        } else {
+            $this->fileName = now()->format('Y-m-d_his') . '-final_projects_s2.xlsx';
+        }
 
         $this->data = $data;
 
-        $this->url = $url;
     }
 
     public function view(): View
