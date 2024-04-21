@@ -10,6 +10,16 @@ class EditInternship extends EditRecord
 {
     protected static string $resource = InternshipResource::class;
 
+    public static function getNavigationLabel(): string
+    {
+        return __("Edit Internship");
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
     protected function getHeaderActions(): array
     {
         return [
