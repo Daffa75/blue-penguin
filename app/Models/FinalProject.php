@@ -27,4 +27,9 @@ class FinalProject extends Model
     {
         return $this->belongsTo(Student::class);
     }
+
+    public function logbooks()
+    {
+        return $this->morphMany(Logbook::class, 'commentable');
+    }
 }

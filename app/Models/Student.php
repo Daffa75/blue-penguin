@@ -40,8 +40,8 @@ class Student extends Model
     {
         return $this->belongsToMany(Internship::class);
     }
-    public function internshipLogbooks(): HasMany
+    public function logbooks(): HasMany
     {
-        return $this->hasMany(InternshipLogbook::class, 'student_id');
+        return $this->hasMany(Logbook::class, 'student_id');
     }
 }

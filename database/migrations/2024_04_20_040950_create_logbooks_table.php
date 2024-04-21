@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('internships_logbook', function (Blueprint $table) {
+        Schema::create('logbooks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('internship_id')->constrained();
-            $table->foreignId('student_id')->constrained();
+            $table->foreignId('student_id')->constrained()->cascadeOnDelete();
+            $table->morphs('commentable');
             $table->date('date');
             $table->text('activity');
-            $table->text('result');
             $table->text('feedback')->nullable();
-            $table->text('status')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('internships_logbook');
+        Schema::dropIfExists('logbooks');
     }
 };
