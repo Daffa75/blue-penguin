@@ -162,12 +162,21 @@ class InternshipResource extends Resource
                                     ->where('name', 'like', "%{$search}%")
                                     ->orWhere('nim', 'like', "%{$search}%");
                             });
-                            // ->orWhere('title', 'like', "%{$search}%");
                     })
                     ->hidden(function () {
                         return Filament::getCurrentPanel()->getId() === 'student';
                     })
                     ->html(),
+                Tables\Columns\ImageColumn::make('lecturer.image_url')
+                    ->label(__('Supervisor'))
+                    ->tooltip(function (Internship $record) {
+                        return $record->lecturer->name;
+                    })
+                    ->hidden(function () {
+                        return Filament::getCurrentPanel()->getId() === 'lecturer';
+                    })
+                    ->alignCenter()
+                    ->circular(),
                 Tables\Columns\TextColumn::make('company_name')
                     ->label(__('Company'))
                     ->searchable()
@@ -188,16 +197,6 @@ class InternshipResource extends Resource
                     ->label(__('End Date'))
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->date('d M Y'),
-                Tables\Columns\ImageColumn::make('lecturer.image_url')
-                    ->label(__('Lecturer'))
-                    ->tooltip(function (Internship $record) {
-                        return $record->lecturer->name;
-                    })
-                    ->hidden(function () {
-                        return Filament::getCurrentPanel()->getId() === 'lecturer';
-                    })
-                    ->alignCenter()
-                    ->circular(),
             ])
             // ->filters(self::getFilters())
             ->filters([
