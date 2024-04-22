@@ -11,4 +11,9 @@ class CreateInternship extends CreateRecord
     protected static string $resource = InternshipResource::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-ellipsis';
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+    }
 }

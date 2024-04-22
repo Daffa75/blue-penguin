@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -60,6 +61,20 @@ class LecturerResource extends Resource
                                     ->required()
                                     ->maxLength(255),
                             ])->columns(2),
+
+                        Forms\Components\Section::make()
+                            ->heading(__('Supervising Quota'))
+                            ->translateLabel()
+                            ->collapsible()
+                            ->description(__('Enter the maximum number of students that can be supervised by the Lecturer'))
+                            ->schema([
+                                Forms\Components\TextInput::make('quota')
+                                    ->label(__('Quota'))
+                                    ->required()
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(18)
+                            ])->columns(1),
 
                         Forms\Components\Section::make()
                             ->heading(__('Profile Picture'))
@@ -112,12 +127,12 @@ class LecturerResource extends Resource
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Placeholder::make('Created at')
-//                            ->label(__('Created at'))
+                            //                            ->label(__('Created at'))
                             ->translateLabel()
                             ->content(fn (Lecturer $record): ?string => $record->created_at?->diffForHumans()),
 
                         Forms\Components\Placeholder::make('Updated at')
-//                            ->label(__('Last modified at'))
+                            //                            ->label(__('Last modified at'))
                             ->translateLabel()
                             ->content(fn (Lecturer $record): ?string => $record->updated_at?->diffForHumans()),
                     ])
@@ -142,6 +157,29 @@ class LecturerResource extends Resource
                 Tables\Columns\TextColumn::make('nip')
                     ->label('NIP')
                     ->copyable()
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('remaining_quota')
+                    ->label(__('Remaining Quota'))
+                    ->weight(FontWeight::SemiBold)
+                    ->state(function (Lecturer $record) {
+                        $remainingQuota = $record->quota - $record->finalProjects()
+                            ->wherePivotIn('role', ['supervisor 1', 'supervisor 2'])
+                            ->where('status', 'ongoing')
+                            ->count();
+
+                        return $remainingQuota;
+                    })
+                    ->color(function (Lecturer $record) {
+                        $remainingQuota = $record->quota - $record->finalProjects()
+                            ->wherePivotIn('role', ['supervisor 1', 'supervisor 2'])
+                            ->where('status', 'ongoing')
+                            ->count();
+
+                        return $remainingQuota <= 0 ? 'danger' : ($remainingQuota < 5 ? 'warning' : 'okay');
+                    }),
+                Tables\Columns\TextColumn::make('quota')
+                    ->label(__('Supervising Quota'))
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')

@@ -16,6 +16,7 @@ class Lecturer extends Model
         'image',
         'image_url',
         'nip',
+        'quota',
     ];
 
     public function user(): BelongsTo

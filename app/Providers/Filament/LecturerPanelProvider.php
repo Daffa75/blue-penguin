@@ -32,27 +32,21 @@ class LecturerPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+            ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
+            ->brandLogo(asset('assets/images/logo.png'))
+            ->brandLogoHeight('2.5rem')
+            ->favicon(asset('favicon.ico'))
             ->id('lecturer')
-            ->path('lecturer')
-            ->colors([
-                'primary' => Color::Amber,
-            ])
+            ->path('dosen')
             ->login(CustomLogin::class)
             ->profile(CustomProfile::class)
+            ->colors([
+                'primary' => Color::Sky,
+            ])
             ->discoverResources(in: app_path('Filament/Lecturer/Resources'), for: 'App\\Filament\\Lecturer\\Resources')
-            ->discoverResources(in: app_path('Filament/Publication/Resources'), for: 'App\\Filament\\Publication\\Resources')
-            ->discoverResources(in: app_path('Filament/FinalProject/Resources'), for: 'App\\Filament\\FinalProject\\Resources')
+            ->discoverPages(in: app_path('Filament/Lecturer/Pages'), for: 'App\\Filament\\Lecturer\\Pages')
             ->resources([
                 \App\Filament\Admin\Resources\InternshipResource::class,
-            ])
-            ->discoverPages(in: app_path('Filament/Lecturer/Pages'), for: 'App\\Filament\\Lecturer\\Pages')
-            ->pages([
-                Pages\Dashboard::class,
-            ])
-            ->widgets([
-                AccountOverviewCustom::class,
-                PublicationChart::class,
-                PublicationLineChart::class,
             ])
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
@@ -71,6 +65,7 @@ class LecturerPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->viteTheme('resources/css/filament/admin/theme.css');
     }
 }
