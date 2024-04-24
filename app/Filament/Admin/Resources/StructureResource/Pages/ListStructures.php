@@ -9,12 +9,21 @@ use App\Models\Curriculum\Module;
 use App\Models\Curriculum\Semester;
 use Carbon\Carbon;
 use Coolsam\FilamentExcel\Actions\ImportField;
+use Filament\Resources\Components\Tab;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListStructures extends ListRecords
 {
     protected static string $resource = StructureResource::class;
+
+    public function getTabs(): array
+    {
+        return [
+            'Sarjana' => Tab::make()->query(fn ($query) => $query->where('website', 'bachelor')),
+            'Magister' => Tab::make()->query(fn ($query) => $query->where('website', 'master')),
+        ];
+    }
 
     protected function getHeaderActions(): array
     {

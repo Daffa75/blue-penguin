@@ -41,6 +41,7 @@ class Event extends Model
         'title',
         'slug',
         'language',
+        'website',
         'date',
         'description'
     ];

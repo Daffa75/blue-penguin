@@ -14,6 +14,7 @@ class CurriculumStructure extends Model
 
     protected $fillable = [
         'curriculum_name',
+        'website',
         'language',
     ];
 

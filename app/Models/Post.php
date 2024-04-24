@@ -44,8 +44,7 @@ class Post extends Model implements HasMedia
         'article',
         'tag',
         'language',
-        // 'created_by',
-        // 'updated_by',
+        'website',
         'published_at',
         'status',
     ];

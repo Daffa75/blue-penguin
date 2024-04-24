@@ -67,8 +67,16 @@ class StructureResource extends Resource
                                         'en' => 'English'
                                     ])
                                     ->required(),
+
+                                Forms\Components\Select::make('website')
+                                    ->label(__("Study Program"))
+                                    ->options([
+                                        'bachelor' => 'Sarjana',
+                                        'master' => 'Magister',
+                                    ])
+                                    ->required(),
                             ])
-                            ->columns(2)
+                            ->columns(3)
                     ])
                     ->columnSpan(['lg' => fn (?CurriculumStructure $record) => $record === null ? 3 : 2]),
 
@@ -189,23 +197,26 @@ class StructureResource extends Resource
                         Components\Section::make('Curriculum')
                             ->schema([
                                 Components\TextEntry::make('id')
-                                ->label(__('Curriculum ID')),
+                                    ->label(__('Curriculum ID')),
                                 Components\TextEntry::make('curriculum_name')
-                                ->label(__('Curriculum Name')),
+                                    ->label(__('Curriculum Name')),
                                 Components\TextEntry::make('language')
-                                ->label(__('Language'))
-                                ->state(fn ($record) => $record === 'id' ? 'Bahasa Indonesia' : 'English')
+                                    ->label(__('Language'))
+                                    ->state(fn ($record) => $record === 'id' ? 'Bahasa Indonesia' : 'English'),
+                                Components\TextEntry::make('website')
+                                    ->label(__("Study Program"))
+                                    ->getStateUsing(fn ($record): string => $record->website === 'bachelor' ? 'Sarjana' : 'Magister'),
                             ])
                             ->columns(2)
                             ->columnSpan(2),
                         Components\Section::make()
                             ->schema([
                                 Components\TextEntry::make('created_at')
-                                ->dateTime('l, j F Y')
-                                ->since(),
+                                    ->dateTime('l, j F Y')
+                                    ->since(),
                                 Components\TextEntry::make('updated_at')
-                                ->dateTime('l, j F Y')
-                                ->since(),
+                                    ->dateTime('l, j F Y')
+                                    ->since(),
                             ])
                             ->columnSpan(1),
                     ])

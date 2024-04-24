@@ -89,7 +89,14 @@ class EventResource extends Resource
                                         'id' => 'Bahasa Indonesia',
                                         'en' => 'English',
                                     ])
-                                    ->searchable()
+                                    ->required(),
+
+                                Forms\Components\Select::make('website')
+                                    ->label(__("Website"))
+                                    ->options([
+                                        'bachelor' => 'Sarjana',
+                                        'master' => 'Magister',
+                                    ])
                                     ->required(),
                             ])
                     ])

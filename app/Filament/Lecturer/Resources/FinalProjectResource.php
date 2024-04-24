@@ -235,10 +235,10 @@ class FinalProjectResource extends Resource
                     ->color('gray')
                     ->description(function (FinalProject $record): Htmlable {
                         $name = $record->student->name;
-                        return new HtmlString("<span class='text-gray-600 dark:text-gray-500 text-sm font-semibold'>$name</span>");
+                        return new HtmlString("<span class='text-sm font-semibold text-gray-600 dark:text-gray-500'>$name</span>");
                     }, position: 'above')
                     ->description(function (FinalProject $record): Htmlable {
-                        return new HtmlString("<span class='text-gray-600 dark:text-gray-500 text-xs'>$record->title</span>");
+                        return new HtmlString("<span class='text-xs text-gray-600 dark:text-gray-500'>$record->title</span>");
                     })
                     ->searchable(auth()->user()->role != '4', query: function (Builder $query, string $search): Builder {
                         return $query

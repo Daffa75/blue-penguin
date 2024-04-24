@@ -55,7 +55,7 @@ class PostResource extends Resource
                                     ->required()
                                     ->live(onBlur: true)
                                     ->maxLength(255)
-                                    ->afterStateUpdated(fn(string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                                    ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
 
                                 Forms\Components\TextInput::make('slug')
                                     ->disabled()
@@ -100,7 +100,7 @@ class PostResource extends Resource
                                 Forms\Components\DateTimePicker::make('published_at')
                                     ->seconds(false)
                                     ->timezone('Asia/Makassar')
-                                    ->hidden(fn(Get $get) => $get('status') !== 'published'),
+                                    ->hidden(fn (Get $get) => $get('status') !== 'published'),
 
                                 Forms\Components\Select::make('language')
                                     ->label(__("Language"))
@@ -108,7 +108,14 @@ class PostResource extends Resource
                                         'id' => 'Bahasa Indonesia',
                                         'en' => 'English',
                                     ])
-                                    ->searchable()
+                                    ->required(),
+
+                                Forms\Components\Select::make('website')
+                                    ->label(__("Website"))
+                                    ->options([
+                                        'bachelor' => 'Sarjana',
+                                        'master' => 'Magister',
+                                    ])
                                     ->required(),
 
                                 SpatieTagsInput::make('tags'),
@@ -142,13 +149,13 @@ class PostResource extends Resource
                     ->sortable()
                     ->translatelabel()
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'en' => 'success',
                         'id' => 'warning',
                     }),
 
                 Tables\Columns\BadgeColumn::make('status')
-                    ->getStateUsing(fn(Post $record): string => $record->published_at?->isPast() ? 'Published' : ($record->published_at ? 'Pending' : 'Draft'))
+                    ->getStateUsing(fn (Post $record): string => $record->published_at?->isPast() ? 'Published' : ($record->published_at ? 'Pending' : 'Draft'))
                     ->sortable()
                     ->colors([
                         'success' => 'Published',
@@ -167,23 +174,24 @@ class PostResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->filtersFormColumns(2)
             ->filters([
                 Tables\Filters\Filter::make('published_at')
                     ->form([
                         Forms\Components\DatePicker::make('published_from')
-                            ->placeholder(fn($state): string => now()->subYear()->format('Y')),
+                            ->placeholder(fn ($state): string => now()->subYear()->format('Y')),
                         Forms\Components\DatePicker::make('published_until')
-                            ->placeholder(fn($state): string => now()->format('M d, Y')),
+                            ->placeholder(fn ($state): string => now()->format('M d, Y')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
                                 $data['published_from'] ?? null,
-                                fn(Builder $query, $date): Builder => $query->whereDate('published_at', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('published_at', '>=', $date),
                             )
                             ->when(
                                 $data['published_until'] ?? null,
-                                fn(Builder $query, $date): Builder => $query->whereDate('published_at', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('published_at', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
@@ -247,7 +255,10 @@ class PostResource extends Resource
                                                 ->label(__('Created by')),
                                         ]),
 
-                                        Components\SpatieTagsEntry::make('tags'),
+                                        Components\Group::make([
+                                            Components\TextEntry::make('website')
+                                                ->getStateUsing(fn (Post $record): string => $record->website === 'bachelor' ? 'Sarjana' : 'Magister'),
+                                        ]),
                                     ]),
                                 Components\ImageEntry::make('image')
                                     ->hiddenLabel()
@@ -274,8 +285,8 @@ class PostResource extends Resource
 
                             Components\TextEntry::make('status')
                                 ->badge()
-                                ->getStateUsing(fn(Post $record): string => $record->published_at?->isPast() ? 'Published' : ($record->published_at ? 'Pending' : 'Draft'))
-                                ->color(fn(string $state): string => match ($state) {
+                                ->getStateUsing(fn (Post $record): string => $record->published_at?->isPast() ? 'Published' : ($record->published_at ? 'Pending' : 'Draft'))
+                                ->color(fn (string $state): string => match ($state) {
                                     'Published' => 'success',
                                     'Pending' => 'warning',
                                     'Draft' => 'info',
@@ -284,7 +295,11 @@ class PostResource extends Resource
                             Components\TextEntry::make('published_at')
                                 ->label(__('Published Date'))
                                 ->date('l, d M Y')
-                                ->hidden(fn($record) => !$record->status === 'published')
+                                ->hidden(fn ($record) => !$record->status === 'published'),
+
+
+
+                            Components\SpatieTagsEntry::make('tags'),
                         ]),
                 ])
                     ->columnSpan(['lg' => 1]),
