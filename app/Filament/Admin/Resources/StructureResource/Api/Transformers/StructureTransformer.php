@@ -17,6 +17,7 @@ class StructureTransformer extends JsonResource
         return [
             'structure_id' => $this->id,
             'curriculum_name' => $this->curriculum_name,
+            'image' => $this->media->pluck('original_url')->first(),
             'semester' => $this->semester->map(function ($semester) {
                 return [
                     'id' => $semester->id,

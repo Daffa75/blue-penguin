@@ -8,12 +8,14 @@ use App\Filament\Admin\Resources\StructureResource\RelationManagers\SemesterRela
 use App\Models\Curriculum\CurriculumStructure;
 use App\Models\Curriculum\Semester;
 use Filament\Forms;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Infolists\Components;
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Filament\Pages\SubNavigationPosition;
@@ -76,7 +78,16 @@ class StructureResource extends Resource
                                     ])
                                     ->required(),
                             ])
-                            ->columns(3)
+                            ->columns(3),
+
+                        Forms\Components\Section::make(__('Image'))
+                            ->schema([
+                                SpatieMediaLibraryFileUpload::make('image')
+                                    ->image()
+                                    ->collection('curriculum_structure/images')
+                                    ->hiddenLabel()
+                            ])
+                            ->collapsible(),
                     ])
                     ->columnSpan(['lg' => fn (?CurriculumStructure $record) => $record === null ? 3 : 2]),
 
@@ -211,6 +222,9 @@ class StructureResource extends Resource
                             ->columnSpan(2),
                         Components\Section::make()
                             ->schema([
+                                SpatieMediaLibraryImageEntry::make('image')
+                                ->hiddenLabel()
+                                ->collection('curriculum_structure/images'),
                                 Components\TextEntry::make('created_at')
                                     ->dateTime('l, j F Y')
                                     ->since(),
