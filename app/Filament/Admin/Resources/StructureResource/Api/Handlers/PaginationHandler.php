@@ -17,9 +17,10 @@ class PaginationHandler extends Handlers {
 
         $query = QueryBuilder::for($model)
         ->with('semester.modules')
+        ->with('media')
         ->allowedFields($model::$allowedFields ?? [])
         ->allowedSorts($model::$allowedSorts ?? [])
-        ->allowedFilters(['language'])
+        ->allowedFilters(['language', 'website'])
         ->allowedIncludes($model::$allowedIncludes ?? null)
         ->paginate(request()->query('per_page'))
         ->appends(request()->query());

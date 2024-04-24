@@ -12,7 +12,7 @@ class PaginationHandler extends Handlers
     public static string | null $uri = '/';
     public static string | null $resource = PostResource::class;
 
-    public static $allowedfilters = ['language'];
+    public static $allowedfilters = ['language', 'website'];
     public static $allowedSorts = ['published_at'];
 
 
