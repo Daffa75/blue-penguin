@@ -21,6 +21,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 use Rupadana\ApiService\ApiServicePlugin;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -48,17 +49,18 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label(fn ():string => __('Website')),
+                    ->label(fn (): string => __('Website')),
                 NavigationGroup::make()
-                    ->label(fn ():string => __('Statistics')),
+                    ->label(fn (): string => __('Statistics')),
                 NavigationGroup::make()
-                    ->label(fn ():string => __('Content')),
+                    ->label(fn (): string => __('Content')),
                 NavigationGroup::make()
-                    ->label(fn ():string => __('Management')),
+                    ->label(fn (): string => __('Management')),
             ])
             ->plugins([
                 ApiServicePlugin::make(),
-                FilamentSpatieRolesPermissionsPlugin::make()
+                FilamentSpatieRolesPermissionsPlugin::make(),
+                FilamentFullCalendarPlugin::make(),
 
             ])
             ->middleware([
