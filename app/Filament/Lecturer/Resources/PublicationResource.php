@@ -71,7 +71,7 @@ class PublicationResource extends Resource
         return parent::getGlobalSearchEloquentQuery()->with('lecturers');
     }
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-document-magnifying-glass';
 
     public static function form(Form $form): Form
     {

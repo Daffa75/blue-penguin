@@ -119,12 +119,12 @@ class FinalProjectLecturerGraph extends ApexChartWidget
                 [
                     'name' => 'Mentoring Final Project S1',
                     'data' => $dataS1,
-                    'color' => '#ff9966',
+                    'color' => '#3994D6',
                 ],
                 [
                     'name' => 'Mentoring Final Project S2',
                     'data' => $dataS2,
-                    'color' => '#66ffcc',
+                    'color' => '#65E892',
                 ]
             ],
             'xaxis' => [

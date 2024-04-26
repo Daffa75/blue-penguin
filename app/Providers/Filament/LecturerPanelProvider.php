@@ -11,6 +11,8 @@ use App\Filament\Publication\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -47,8 +49,29 @@ class LecturerPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Lecturer/Pages'), for: 'App\\Filament\\Lecturer\\Pages')
             ->resources([
                 \App\Filament\Admin\Resources\InternshipResource::class,
+                \App\Filament\Admin\Resources\InventarisResource::class,
             ])
             ->sidebarCollapsibleOnDesktop()
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label(fn ():string => __('Statistics')),
+                NavigationGroup::make()
+                    ->label(fn ():string => __('Content')),
+            ])
+            ->navigationItems([
+                NavigationItem::make(fn (): string => __('Final Project Bachelor'))
+                    ->url(fn (): string => FinalProjectResource::getUrl())
+                    ->group(fn (): string => __('Content')),
+                NavigationItem::make(fn (): string => __('Final Project Master'))
+                    ->url(fn (): string => FinalProjectS2Resource::getUrl())
+                    ->group(fn (): string => __('Content')),
+                NavigationItem::make(fn (): string => __('Publications'))
+                    ->url(fn (): string => PublicationResource::getUrl())
+                    ->group(fn (): string => __('Content')),
+                NavigationItem::make(fn (): string => __('Intellectual Properties'))
+                    ->url(fn (): string => HakiResource::getUrl())
+                    ->group(fn (): string => __('Content')),
+            ])
             ->plugins([
                 ApiServicePlugin::make(),
             ])
