@@ -56,7 +56,7 @@ class InternshipResource extends Resource
         return parent::getEloquentQuery();
     }
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-server-stack';
 
     private static function getFilters(): array
     {
@@ -162,6 +162,7 @@ class InternshipResource extends Resource
                                     ->where('name', 'like', "%{$search}%")
                                     ->orWhere('nim', 'like', "%{$search}%");
                             });
+                            // ->orWhere('title', 'like', "%{$search}%");
                     })
                     ->hidden(function () {
                         return Filament::getCurrentPanel()->getId() === 'student';
@@ -184,11 +185,16 @@ class InternshipResource extends Resource
                 Tables\Columns\TextColumn::make('location')
                     ->label(__('Location'))
                     ->wrap(),
-                Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
-                    ->state(fn (Internship $record) => now() >= $record->end_date ? __('Done') : __('Ongoing'))
-                    ->color(fn (Internship $record) => now() >= $record->end_date ? 'success' : 'gray')
-                    ->badge(),
+                Tables\Columns\ImageColumn::make('lecturer.image_url')
+                    ->label(__('Lecturer'))
+                    ->tooltip(function (Internship $record) {
+                        return $record->lecturer->name;
+                    })
+                    ->hidden(function () {
+                        return Filament::getCurrentPanel()->getId() === 'lecturer';
+                    })
+                    ->alignCenter()
+                    ->circular(),
                 Tables\Columns\TextColumn::make('start_date')
                     ->label(__('Start Date'))
                     ->toggleable(isToggledHiddenByDefault: true)
@@ -197,6 +203,11 @@ class InternshipResource extends Resource
                     ->label(__('End Date'))
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->date('d M Y'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->state(fn (Internship $record) => now() >= $record->end_date ? __('Done') : __('Ongoing'))
+                    ->color(fn (Internship $record) => now() >= $record->end_date ? 'success' : 'gray')
+                    ->badge(),
             ])
             // ->filters(self::getFilters())
             ->filters([

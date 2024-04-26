@@ -31,7 +31,7 @@ class FinalProjectS2Resource extends Resource
 {
     protected static ?string $model = FinalProject::class;
     protected static ?string $recordTitleAttribute = 'title';
-    protected static ?string $navigationIcon = 'phosphor-article-bold';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $slug = 'final-projects-s2';
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
