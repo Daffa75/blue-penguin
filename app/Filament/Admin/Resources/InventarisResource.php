@@ -19,11 +19,16 @@ class InventarisResource extends Resource
 {
     protected static ?string $model = Inventaris::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
     public static function getNavigationGroup(): ?string
     {
         return (__('Content'));
+    }
+
+    public static function getPluralLabel(): ?string
+    {
+        return __('Inventory');
     }
 
     public static function canViewAny(): bool

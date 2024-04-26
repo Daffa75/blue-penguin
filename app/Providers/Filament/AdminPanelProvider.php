@@ -8,6 +8,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -18,6 +19,10 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+
+use App\Filament\Admin\Resources\InventarisResource;
+use App\Filament\Lecturer\Resources\FinalProjectResource;
+use App\Filament\Lecturer\Resources\FinalProjectS2Resource;
 
 use Rupadana\ApiService\ApiServicePlugin;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
@@ -48,13 +53,24 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->navigationGroups([
                 NavigationGroup::make()
-                    ->label(fn ():string => __('Website')),
-                NavigationGroup::make()
                     ->label(fn ():string => __('Statistics')),
+                NavigationGroup::make()
+                    ->label(fn ():string => __('Website')),
                 NavigationGroup::make()
                     ->label(fn ():string => __('Content')),
                 NavigationGroup::make()
+                    ->label(fn ():string => __('Roles and Permissions')),
+                NavigationGroup::make()
                     ->label(fn ():string => __('Management')),
+            ])
+            ->navigationItems([
+                // For Content Group
+                NavigationItem::make(fn (): string => __('Final Project Bachelor'))
+                    ->url(fn (): string => FinalProjectResource::getUrl())
+                    ->group(fn (): string => __('Content')),
+                NavigationItem::make(fn (): string => __('Final Project Master'))
+                    ->url(fn (): string => FinalProjectS2Resource::getUrl())
+                    ->group(fn (): string => __('Content')),
             ])
             ->plugins([
                 ApiServicePlugin::make(),
