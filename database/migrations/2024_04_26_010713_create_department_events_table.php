@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('department_events', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('slug');
-            $table->boolean('allDay');
             $table->dateTime('start');
             $table->dateTime('end');
             $table->string('url');

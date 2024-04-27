@@ -37,13 +37,10 @@ class DepartmentEvent extends Model
     protected $casts = [
         'start' => 'datetime',
         'end' => 'datetime',
-        'allDay' => 'boolean'
     ];
 
     protected $fillable = [
         'title',
-        'slug',
-        'allDay',
         'start',
         'end',
         'url',

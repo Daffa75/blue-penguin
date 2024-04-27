@@ -44,4 +44,8 @@ class Student extends Model
     {
         return $this->hasMany(Logbook::class, 'student_id');
     }
+    public function departmentEvents(): BelongsToMany
+    {
+        return $this->belongsToMany(DepartmentEvent::class)->withPivot('role');
+    }
 }

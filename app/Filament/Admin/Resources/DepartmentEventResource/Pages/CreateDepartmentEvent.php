@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateDepartmentEvent extends CreateRecord
 {
     protected static string $resource = DepartmentEventResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('edit', ['record' => $this->record]);
+    }
 }

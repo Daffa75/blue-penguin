@@ -51,4 +51,8 @@ class Lecturer extends Model
     {
         return $this->hasMany(Inventaris::class, 'lecturer_id');
     }
+    public function departmentEvents(): BelongsToMany
+    {
+        return $this->belongsToMany(DepartmentEvent::class)->withPivot('role');
+    }
 }

@@ -8,6 +8,8 @@ use App\Filament\Admin\Resources\DepartmentEventResource\Widgets\CalendarWidget;
 use App\Models\DepartmentEvent;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,6 +24,8 @@ class DepartmentEventResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -34,29 +38,27 @@ class DepartmentEventResource extends Resource
                                     ->columnSpanFull()
                                     ->translateLabel()
                                     ->required()
-                                    ->live(onBlur: true)
-                                    ->maxLength(255)
-                                    ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
-                                Forms\Components\TextInput::make('slug')
-                                    ->columnSpanFull()
-                                    ->hiddenOn(['view', 'edit'])
-                                    ->disabled()
-                                    ->dehydrated()
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->unique(DepartmentEvent::class, 'slug', ignoreRecord: true),
+                                    ->unique(DepartmentEvent::class, 'title', ignoreRecord: true)
+                                    ->maxLength(255),
+
                                 Forms\Components\DateTimePicker::make('start')
-                                    ->live()
+                                    ->maxDate(fn (callable $get) => $get('end'))
+                                    ->seconds(false)
+                                    ->reactive()
                                     ->required(),
+
                                 Forms\Components\DateTimePicker::make('end')
-                                    ->minDate('start')
+                                    ->disabled(fn (callable $get) => $get('start') === null)
+                                    ->minDate(fn (callable $get) => $get('start'))
+                                    ->seconds(false)
+                                    ->reactive()
                                     ->required(),
+                                
                                 Forms\Components\Textarea::make('description')
-                                    ->required()
                                     ->columnSpanFull(),
+
                                 Forms\Components\TextInput::make('url')
                                     ->columnSpanFull()
-                                    ->required()
                                     ->maxLength(255),
                             ])
                             ->columns(2),
@@ -81,23 +83,11 @@ class DepartmentEventResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('allDay')
-                    ->boolean(),
                 Tables\Columns\TextColumn::make('start')
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('end')
                     ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('url')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_by')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('updated_by')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -108,6 +98,7 @@ class DepartmentEventResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 //
             ])
@@ -124,7 +115,8 @@ class DepartmentEventResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\LecturersRelationManager::class,
+            RelationManagers\StudentsRelationManager::class
         ];
     }
 
@@ -133,6 +125,14 @@ class DepartmentEventResource extends Resource
         return [
             CalendarWidget::class
         ];
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\ViewDepartmentEvent::class,
+            Pages\EditDepartmentEvent::class,
+        ]);
     }
 
     public static function getPages(): array
