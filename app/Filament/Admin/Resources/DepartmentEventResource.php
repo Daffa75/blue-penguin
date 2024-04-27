@@ -8,15 +8,13 @@ use App\Filament\Admin\Resources\DepartmentEventResource\Widgets\CalendarWidget;
 use App\Models\DepartmentEvent;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
 
 class DepartmentEventResource extends Resource
 {
@@ -25,6 +23,11 @@ class DepartmentEventResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
+    private function echoTest()
+    {
+        echo "test";
+    }
 
     public static function form(Form $form): Form
     {
@@ -53,7 +56,7 @@ class DepartmentEventResource extends Resource
                                     ->seconds(false)
                                     ->reactive()
                                     ->required(),
-                                
+
                                 Forms\Components\Textarea::make('description')
                                     ->columnSpanFull(),
 
@@ -105,11 +108,83 @@ class DepartmentEventResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
+            ->recordUrl(
+                fn (DepartmentEvent $record): string => Pages\ViewDepartmentEvent::getUrl([$record->id]),
+            )
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Components\Group::make([
+                    Components\Section::make()
+                        ->schema([
+                            Components\TextEntry::make('title')
+                                ->hiddenLabel()
+                                ->size(Components\TextEntry\TextEntrySize::Large)
+                                ->translateLabel(),
+
+                            Components\Split::make([
+                                Components\Grid::make(4)
+                                    ->schema([
+                                        Components\TextEntry::make('start')
+                                            ->label('Tanggal Mulai')
+                                            ->badge()
+                                            ->date('l, d M Y'),
+
+                                        Components\TextEntry::make('start')
+                                            ->label('Waktu Mulai')
+                                            ->badge()
+                                            ->date('H:i'),
+
+                                        Components\TextEntry::make('end')
+                                            ->label('Tanggal Selesai')
+                                            ->badge()
+                                            ->date('l, d M Y'),
+
+                                        Components\TextEntry::make('end')
+                                            ->label('Waktu Selesai')
+                                            ->badge()
+                                            ->date('H:i'),
+                                    ]),
+                            ])->from('lg'),
+                        ]),
+                    Components\Section::make(__('Description'))
+                        ->schema([
+                            Components\TextEntry::make('description')
+                                ->prose()
+                                ->markdown()
+                                ->hiddenLabel(),
+                        ])
+                        ->collapsible(),
+                ])
+                    ->columnSpan(['lg' => 2]),
+
+                Components\Group::make([
+                    Components\Section::make()
+                        ->schema([
+                            // Components\Group::make([
+                            //     Components\TextEntry::make('updated_by.name')
+                            //         ->label(__('Last updated by')),
+                            // ]),
+
+                            // Components\Group::make([
+                            //     Components\TextEntry::make('created_by.name')
+                            //         ->label(__('Created by')),
+                            // ]),
+
+                            Components\TextEntry::make('url')
+                                ->translatelabel(),
+                        ]),
+                ])
+            ])
+            ->columns(['lg' => 3]);
     }
 
     public static function getRelations(): array

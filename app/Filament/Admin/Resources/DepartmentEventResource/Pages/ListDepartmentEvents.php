@@ -24,4 +24,6 @@ class ListDepartmentEvents extends ListRecords
             CalendarWidget::class,
         ];
     }
+
+    
 }

@@ -44,6 +44,7 @@ class LecturersRelationManager extends RelationManager
                         ->native(false)
                         ->options([
                             'Speaker' => (__('Speaker')),
+                            'Examiner' => (__('Penguji')),
                             'Moderator' => (__('Moderator')),
                             'Participant' => (__('Participant')),
                         ]),

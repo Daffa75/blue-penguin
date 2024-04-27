@@ -30,7 +30,9 @@
         "phpoffice/phpword": "^1.2",
         "predis/predis": "^2.2",
         "rupadana/filament-api-service": "^3.0",
-        "saade/filament-fullcalendar": "3.0"
+        "saade/filament-fullcalendar": "3.0",
+        "spatie/calendar-links": "^1.11",
+        "webbingbrasil/filament-copyactions": "^3.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.9",
