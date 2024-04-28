@@ -32,16 +32,18 @@ class StudentsRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->sortable()
                     ->translateLabel()
-                    ->icon(fn(Student $record) => $record->image_url ?: asset('assets/images/default_avatar.jpg')),
+                    ->icon(fn (Student $record) => $record->image_url ?: asset('assets/images/default_avatar.jpg')),
                 Tables\Columns\TextColumn::make('role')
                     ->translateLabel()
+                    ->sortable()
                     ->badge()
                     ->colors([
                         'info' => 'Bachelor',
                         'success' => 'Master',
                     ])
-                    ->formatStateUsing(fn(string $state): string => (__(ucfirst($state))))
+                    ->formatStateUsing(fn (string $state): string => (__(ucfirst($state))))
             ])
             ->filters([
                 //

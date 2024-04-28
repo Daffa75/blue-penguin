@@ -22,10 +22,12 @@ class LecturersRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->sortable()
                     ->translateLabel()
                     ->icon(fn (Lecturer $record) => $record->image_url ?: asset('assets/images/default_avatar.jpg')),
                 Tables\Columns\TextColumn::make('role')
                     ->translateLabel()
+                    ->sortable()
                     ->badge()
                     ->colors([
                         'info' => 'Head',
@@ -37,7 +39,7 @@ class LecturersRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                AttachAction::make()->form(fn (AttachAction $action): array => [
+                AttachAction::make()->preloadRecordSelect()->form(fn (AttachAction $action): array => [
                     $action->getRecordSelect(),
                     Forms\Components\Select::make('role')
                         ->translateLabel()

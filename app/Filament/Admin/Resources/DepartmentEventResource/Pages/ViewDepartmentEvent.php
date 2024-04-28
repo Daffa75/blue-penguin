@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\DepartmentEventResource\Pages;
 
 use App\Filament\Admin\Resources\DepartmentEventResource;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\ViewRecord;
 use Spatie\CalendarLinks\Link;
 use Webbingbrasil\FilamentCopyActions\Pages\Actions\CopyAction;
@@ -14,9 +15,10 @@ class ViewDepartmentEvent extends ViewRecord
 
     protected function getActions(): array
     {
-        return [
-            CopyAction::make()->copyable(function () {
-                $description = "Link: " . $this->record->url . "\n" . $this->record->description;
+        if (Filament::getCurrentPanel()->getId() == 'admin') {
+            return [
+                CopyAction::make()->copyable(function () {
+                    $description = "Link: " . $this->record->url . "\n" . $this->record->description;
 
                     return Link::create(
                         $this->record->title,
@@ -25,10 +27,13 @@ class ViewDepartmentEvent extends ViewRecord
                     )
                         ->description($description)
                         ->google();
-            })
-            ->label(__('Share Event'))
-            ->icon('heroicon-m-share'),
+                })
+                    ->label(__('Share Event'))
+                    ->icon('heroicon-m-share'),
 
-        ];
+            ];
+        } else {
+            return [];
+        }
     }
 }

@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\DepartmentEventResource\Pages;
 use App\Filament\Admin\Resources\DepartmentEventResource\RelationManagers;
 use App\Filament\Admin\Resources\DepartmentEventResource\Widgets\CalendarWidget;
 use App\Models\DepartmentEvent;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
@@ -14,19 +15,42 @@ use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class DepartmentEventResource extends Resource
 {
     protected static ?string $model = DepartmentEvent::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
-    private function echoTest()
+    public static function getPluralLabel(): ?string
     {
-        echo "test";
+        return __('Department Event');
+    }
+
+    private static function getPanelId(): string
+    {
+        return Filament::getCurrentPanel()->getId();
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $results = parent::getEloquentQuery();
+
+        if (self::getPanelId() === 'lecturer') {
+            return $results
+                ->whereHas('lecturers', function (Builder $query) {
+                    return $query
+                        ->where('nip', auth()->user()->lecturer?->nip);
+                });
+        }
+
+        return $results;
     }
 
     public static function form(Form $form): Form
@@ -101,9 +125,18 @@ class DepartmentEventResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->filtersLayout(Tables\Enums\FiltersLayout::AboveContent)
             ->defaultSort('id', 'desc')
             ->filters([
-                //
+                TernaryFilter::make('Kegiatan')
+                    ->placeholder('Semua Kegiatan')
+                    ->trueLabel('Kegiatan Mendatang')
+                    ->falseLabel('Kegiatan Selesai')
+                    ->queries(
+                        true: fn (Builder $query) => $query->whereDate('end', '>=', now()),
+                        false: fn (Builder $query) => $query->whereDate('end', '<=', now()),
+                        blank: fn (Builder $query) => $query->get(),
+                    )
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

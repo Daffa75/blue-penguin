@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Admin\Pages\Auth\CustomProfile;
+use App\Filament\Admin\Resources\DepartmentEventResource;
 use App\Filament\Auth\CustomLogin;
 use App\Filament\Widgets\AccountOverviewCustom;
 use App\Filament\Widgets\PublicationChart;
@@ -28,6 +29,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 use Rupadana\ApiService\ApiServicePlugin;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class LecturerPanelProvider extends PanelProvider
 {
@@ -48,6 +50,7 @@ class LecturerPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Lecturer/Resources'), for: 'App\\Filament\\Lecturer\\Resources')
             ->discoverPages(in: app_path('Filament/Lecturer/Pages'), for: 'App\\Filament\\Lecturer\\Pages')
             ->resources([
+                \App\Filament\Admin\Resources\DepartmentEventResource::class,
                 \App\Filament\Admin\Resources\InternshipResource::class,
                 \App\Filament\Admin\Resources\InventarisResource::class,
             ])
@@ -74,6 +77,7 @@ class LecturerPanelProvider extends PanelProvider
             ])
             ->plugins([
                 ApiServicePlugin::make(),
+                FilamentFullCalendarPlugin::make(),
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('title');
             $table->dateTime('start');
             $table->dateTime('end');
-            $table->string('url');
-            $table->text('description');
+            $table->string('url')->nullable();
+            $table->text('description')->nullable();
             $table->foreignId('created_by')->constrained(
                 table: 'users', indexName: 'department_events_created_by'
             );
