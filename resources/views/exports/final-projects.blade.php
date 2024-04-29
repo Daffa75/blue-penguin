@@ -41,11 +41,10 @@ $status = [
           <td>{{ count($data->lecturers) == 3 ? $data->lecturers[1]->name : $data->lecturers[2]->name }}</td>
           <td>{{ count($data->lecturers) == 3 ? $data->lecturers[2]->name : $data->lecturers[3]->name }}</td>
         @else
-        {{-- tanya bu yuanita  nanti penguji atau pembimbingnya berapa --}}
-          <td>{{ $data->lecturers[1]->name }}</td>
-          <td>{{ $data->lecturers[2]->name }}</td>
-          <td>{{ $data->lecturers[3]->name }}</td>
-          <td>{{ $data->lecturers[4]->name }}</td>
+          <td>{{ $data->lecturers[1]->name ?? '' }}</td>
+          <td>{{ $data->lecturers[2]->name ?? '' }}</td>
+          <td>{{ $data->lecturers[3]->name ?? '' }}</td>
+          <td>{{ $data->lecturers[4]->name ?? '' }}</td>
         @endif
         <td>{{ $status[strtolower($data->status)] }}</td>
       </tr>
