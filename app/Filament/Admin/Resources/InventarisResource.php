@@ -9,17 +9,20 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Infolists\Components;
 
 class InventarisResource extends Resource
 {
     protected static ?string $model = Inventaris::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+    protected static ?int $navigationSort = 6;
 
     public static function getNavigationGroup(): ?string
     {
@@ -38,6 +41,17 @@ class InventarisResource extends Resource
             return false;
         }
         return true;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $panelId = Filament::getCurrentPanel()->getId();
+
+        if ($panelId == 'lecturer') {
+            return parent::getEloquentQuery()->where('lecturer_id', auth()->user()->lecturer->id);
+        }
+
+        return parent::getEloquentQuery();
     }
 
     public static function form(Form $form): Form
@@ -59,6 +73,7 @@ class InventarisResource extends Resource
                                     ->whereRaw('nip REGEXP \'^[0-9]+$\'')
                                     ->pluck('name', 'id');
                             })
+                            ->default(fn () => auth()->user()->lecturer?->id)
                             ->native(false)
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('registration_number')
@@ -162,12 +177,12 @@ class InventarisResource extends Resource
     {
         return $table
             ->columns([
-                SpatieMediaLibraryImageColumn::make('image_distribution')->collection('inventory/images/distribution')
-                    ->label(__('Image Distribution')),
-                SpatieMediaLibraryImageColumn::make('image_physique')->collection('inventory/images/physique')
-                    ->label(__('Image Physique')),
-                SpatieMediaLibraryImageColumn::make('image_number')->collection('inventory/images/number')
-                    ->label(__('Image Number')),
+                // SpatieMediaLibraryImageColumn::make('image_distribution')->collection('inventory/images/distribution')
+                //     ->label(__('Image Distribution')),
+                // SpatieMediaLibraryImageColumn::make('image_physique')->collection('inventory/images/physique')
+                //     ->label(__('Image Physique')),
+                // SpatieMediaLibraryImageColumn::make('image_number')->collection('inventory/images/number')
+                //     ->label(__('Image Number')),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama Barang')
                     ->searchable()
@@ -221,12 +236,53 @@ class InventarisResource extends Resource
                     }),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Components\Section::make(__('Item Detail'))
+                    ->schema([
+                        Components\Grid::make()
+                            ->schema([
+                                Components\TextEntry::make('name')
+                                    ->label('Nama Barang'),
+                                Components\TextEntry::make('lecturer.name')
+                                    ->label('Dosen'),
+                                Components\TextEntry::make('registration_number')
+                                    ->label('Nomor Seri Departemen'),
+                                Components\TextEntry::make('condition')
+                                    ->label('Kondisi'),
+                                Components\TextEntry::make('price')
+                                    ->label('Harga'),
+                                Components\TextEntry::make('quantity')
+                                    ->label('Jumlah Barang'),
+                                Components\TextEntry::make('date')
+                                    ->label('Tanggal')
+                                    ->columnSpanFull(),
+                            ]),
+                    ]),
+                Components\Section::make(__('Image'))
+                    ->schema([
+                        Components\Grid::make(3)
+                            ->schema([
+                                Components\SpatieMediaLibraryImageEntry::make('')
+                                    ->collection('inventory/images/distribution'),
+                                Components\SpatieMediaLibraryImageEntry::make('')
+                                    ->collection('inventory/images/physique'),
+                                Components\SpatieMediaLibraryImageEntry::make('')
+                                    ->collection('inventory/images/number'),
+                            ])
+                    ]),
             ]);
     }
 

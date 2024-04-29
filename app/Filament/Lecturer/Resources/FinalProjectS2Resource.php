@@ -32,6 +32,7 @@ class FinalProjectS2Resource extends Resource
     protected static ?string $model = FinalProject::class;
     protected static ?string $recordTitleAttribute = 'title';
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?int $navigationSort = 2;
     protected static ?string $slug = 'final-projects-s2';
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;

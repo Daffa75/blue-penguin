@@ -12,13 +12,13 @@ class StartingMenu extends Component
     {
         $icons = [
             'admin' => 'heroicon-m-users',
-            'publication' => 'heroicon-m-document-text',
-            'finalProject' =>'phosphor-article-fill',
+            'lecturer' => 'phosphor-graduation-cap-fill',
+            'student' => 'phosphor-student-fill',
         ];
         $panels = filament()->getPanels();
         $labels = [
-            'publication' => 'Publikasi',
-            'finalProject' => 'Tugas Akhir',
+            'lecturer' => 'Lecturer',
+            'student' => 'Student',
         ];
         return view('livewire.starting-menu', [
             "panels" => $panels,

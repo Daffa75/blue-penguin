@@ -9,4 +9,9 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewFinalProjectS2 extends ViewRecord
 {
     protected static string $resource = FinalProjectS2Resource::class;
+
+    public static function getNavigationLabel(): string
+    {
+        return __("View Final Project");
+    }
 }

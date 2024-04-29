@@ -24,7 +24,7 @@ class HakiResource extends Resource
 {
     protected static ?string $model = Haki::class;
     protected static ?string $navigationIcon = 'phosphor-medal';
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 5;
     protected static ?string $recordTitleAttribute = 'name';
     public static function getNavigationGroup(): ?string
     {
@@ -58,7 +58,7 @@ class HakiResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $panelId = Filament::getCurrentPanel()->getId();
-        if ($panelId == 'publication') {
+        if ($panelId == 'lecturer') {
             return parent::getEloquentQuery()->whereHas('lecturers', function (Builder $query) {
                 return $query
                     ->where('nip', auth()->user()->lecturer?->nip);

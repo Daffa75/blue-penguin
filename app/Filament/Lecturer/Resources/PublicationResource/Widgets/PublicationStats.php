@@ -13,7 +13,7 @@ class PublicationStats extends BaseWidget
     public function getPublicationsData(string $type)
     {
         $panelId = Filament::getCurrentPanel()->getId();
-        if ($panelId == 'publication') {
+        if ($panelId == 'lecturer') {
             return Publication::where('type', $type)
                 ->whereHas('lecturers', function (Builder $query) {
                     return $query->where('nip', auth()->user()->lecturer?->nip);

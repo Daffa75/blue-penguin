@@ -6,9 +6,11 @@ use App\Filament\Admin\Resources\InternshipResource;
 use App\Models\Internship;
 use App\Models\Logbook;
 use App\Models\InternshipStudents;
+use App\Models\Lecturer;
 use App\Models\Student;
 use Filament\Facades\Filament;
 use Filament\Forms;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -47,17 +49,36 @@ class LogbookInternship extends ManageRelatedRecords
                     ->columnSpanFull()
                     ->disabled(auth()->user()->role !== '4')
                     ->required(),
+                Forms\Components\TimePicker::make('start_time')
+                    ->label(__('Start Time'))
+                    ->seconds(false)
+                    ->disabled(auth()->user()->role !== '4')
+                    ->required(),
+                Forms\Components\TimePicker::make('end_time')
+                    ->label(__('End Time'))
+                    ->seconds(false)
+                    ->disabled(auth()->user()->role !== '4')
+                    ->required(),
                 Forms\Components\MarkdownEditor::make('activity')
                     ->label(__('Activity'))
-                    // ->disableToolbarButtons(['attachFiles', 'heading', 'table'])
                     ->disableAllToolbarButtons()
                     ->columnSpanFull()
                     ->disabled(auth()->user()->role !== '4')
                     ->required(),
-                Forms\Components\MarkdownEditor::make('feedback')
-                    ->label(__('Feedback'))
+                Repeater::make('feedbacks')
+                    ->relationship('feedbacks')
+                    ->schema([
+                        Forms\Components\Hidden::make('lecturer_id')
+                            ->default(fn () => Lecturer::where('user_id', auth()->user()->id)->first()?->id),
+                        Forms\Components\MarkdownEditor::make('content')
+                            ->disableAllToolbarButtons()
+                            ->required()
+                    ])
+                    ->deletable(false)
+                    ->addActionLabel(__('Add Feedback'))
+                    ->maxItems(1)
+                    ->columnSpanFull()
                     ->hidden(auth()->user()->role !== '3')
-                    ->columnSpanFull(),
             ]);
     }
 
@@ -85,10 +106,15 @@ class LogbookInternship extends ManageRelatedRecords
                     ->label('Activity')
                     ->wrap()
                     ->lineClamp(5),
-                TextColumn::make('feedback')
+                TextColumn::make('feedbacks')
                     ->label('Feedback')
                     ->wrap()
-                    ->lineClamp(5),
+                    ->lineClamp(5)
+                    ->formatStateUsing(function ($record) {
+                        $data = $record->feedbacks->first();
+                        return "<p><b>{$data->lecturer->name}</b> :<br>{$data->content}</p>";
+                    })
+                    ->html()
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('student_id')
@@ -149,13 +175,18 @@ class LogbookInternship extends ManageRelatedRecords
             ->schema([
                 Components\Section::make()
                     ->schema([
-
                         Components\Grid::make()
                             ->schema([
                                 Components\TextEntry::make('student.name')
                                     ->label(__('Student')),
                                 Components\TextEntry::make('date')
-                                    ->label(__('Date'))
+                                    ->label(__('Date')),
+                                Components\TextEntry::make('start_time')
+                                    ->label(__('Start Time'))
+                                    ->formatStateUsing(fn ($state) => date('H:i', strtotime($state))),
+                                Components\TextEntry::make('end_time')
+                                    ->label(__('End Time'))
+                                    ->formatStateUsing(fn ($state) => date('H:i', strtotime($state)))
                             ])
                     ]),
                 Components\Section::make(__("Activity"))
@@ -166,13 +197,18 @@ class LogbookInternship extends ManageRelatedRecords
                             ->columnSpanFull(),
                     ]),
                 Components\Section::make(__("Feedback"))
+                    ->relationship('feedbacks')
                     ->schema([
-                        Components\TextEntry::make('feedback')
+                        Components\TextEntry::make('content')
                             ->label('')
                             ->markdown()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->formatStateUsing(function ($record) {
+                                $data = $record->feedbacks->first();
+                                return "<p><span class='font-bold text-base'>{$data->lecturer->name}</span> :<br>{$data->content}</p>";
+                            }),
                     ])
-                    ->hidden(fn (?Logbook $record) => !$record->feedback),
+                    ->hidden(fn ($record) => $record->feedbacks->isEmpty())
             ])
             ->columns(3);
     }
@@ -225,11 +261,12 @@ class LogbookInternship extends ManageRelatedRecords
 
         $table->addRow();
 
-        $table->addCell(1000, $cellVCentered)->addText('No', ['bold' => true], $cellHCentered);
+        $table->addCell(700, $cellVCentered)->addText('No', ['bold' => true], $cellHCentered);
         $table->addCell(2000, $cellVCentered)->addText('Hari/Tanggal', ['bold' => true], $cellHCentered);
-        $table->addCell(4000, $cellVCentered)->addText('Uraian Detail Kegiatan', ['bold' => true], $cellHCentered);
+        $table->addCell(1000, $cellVCentered)->addText('Waktu', ['bold' => true], $cellHCentered);
+        $table->addCell(3600, $cellVCentered)->addText('Uraian Detail Kegiatan', ['bold' => true], $cellHCentered);
         $table->addCell(2000, $cellVCentered)->addText('Paraf (Pembimbing KP/Supervisor)', ['bold' => true], ['alignment' => 'center', 'lineHeight' => 1.5, 'spaceBefore' => 200]);
-        $table->addCell(1000, $cellVCentered)->addText('Ket', ['bold' => true], $cellHCentered);
+        $table->addCell(700, $cellVCentered)->addText('Ket', ['bold' => true], $cellHCentered);
 
         $i = 1;
 
@@ -238,16 +275,17 @@ class LogbookInternship extends ManageRelatedRecords
             $activity = explode("\n", $logbook->activity);
 
             $table->addRow();
-            $table->addCell(1000, $cellVCentered)->addText($i, null, $cellHCentered);
+            $table->addCell(700, $cellVCentered)->addText($i, null, $cellHCentered);
             $table->addCell(2000, $cellVCentered)->addText($date[0] . ',' . "</w:t><w:br/><w:t>" . $date[1], null, $cellHCentered);
-            $activityCell = $table->addCell(4000);
+            $table->addCell(1000, $cellVCentered)->addText(date('H:i', strtotime($logbook->start_time)) . ' - ' . date('H:i', strtotime($logbook->end_time)), null, $cellHCentered);
+            $activityCell = $table->addCell(3600);
             $activityCell->addText('');
             foreach ($activity as $line) {
                 $activityCell->addText($line, null, ['lineHeight' => 1.5]);
             }
             $activityCell->addText('');
             $table->addCell(2000, $cellVCentered)->addText('');
-            $table->addCell(1000, $cellVCentered)->addText('');
+            $table->addCell(700, $cellVCentered)->addText('');
             $i++;
         }
 
