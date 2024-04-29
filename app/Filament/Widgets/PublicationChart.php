@@ -26,7 +26,7 @@ class PublicationChart extends ChartWidget
     public function getPublicationsData(string $type)
     {
         $panelId = Filament::getCurrentPanel()->getId();
-        if ($panelId == 'publication') {
+        if ($panelId == 'lecturer') {
             return Publication::where('type', $type)
                 ->whereHas('lecturers', function (Builder $query) {
                     return $query->where('nip', auth()->user()->lecturer?->nip);
@@ -61,7 +61,7 @@ class PublicationChart extends ChartWidget
                         $this->getPublicationsData('prosiding'),
                         $this->getPublicationsData('penelitian'),
                         $this->getPublicationsData('pengabdian')
-                  ],
+                    ],
                     'borderRadius' => 10,
                     'animation' => [
                         'duration' => 1000,

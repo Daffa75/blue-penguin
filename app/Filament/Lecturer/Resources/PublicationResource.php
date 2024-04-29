@@ -25,6 +25,10 @@ class PublicationResource extends Resource
 {
     protected static ?string $model = Publication::class;
     protected static ?string $recordTitleAttribute = 'title';
+
+    protected static ?string $navigationIcon = 'heroicon-o-document-magnifying-glass';
+    protected static ?int $navigationSort = 4;
+
     public static function getNavigationGroup(): ?string
     {
         return __('Content');
@@ -38,7 +42,7 @@ class PublicationResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         $panelId = Filament::getCurrentPanel()->getId();
-        if ($panelId == 'publication') {
+        if ($panelId == 'lecturer') {
             return parent::getEloquentQuery()->whereHas('lecturers', function (Builder $query) {
                 return $query
                     ->where('nip', auth()->user()->lecturer?->nip);
@@ -55,11 +59,11 @@ class PublicationResource extends Resource
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         $lecturerList = [];
-        foreach ($record->lecturers as $lecturer){
+        foreach ($record->lecturers as $lecturer) {
             $lecturerList[] = $lecturer->name;
         }
 
-        if (empty($lecturerList)){
+        if (empty($lecturerList)) {
             return [];
         }
 
@@ -70,8 +74,6 @@ class PublicationResource extends Resource
     {
         return parent::getGlobalSearchEloquentQuery()->with('lecturers');
     }
-
-    protected static ?string $navigationIcon = 'heroicon-o-document-magnifying-glass';
 
     public static function form(Form $form): Form
     {
@@ -110,19 +112,19 @@ class PublicationResource extends Resource
                         Forms\Components\Section::make('Additional Information')
                             ->heading(__('Additional Information'))
                             ->schema([
-                            Forms\Components\TextInput::make('link')
-                                ->label(__('Source Link'))
-                                ->columnSpan('full')
-                                ->maxLength(1999),
-                            Forms\Components\TextInput::make('citation')
-                                ->translateLabel()
-                                ->numeric()
-                                ->maxLength(255),
-                            Forms\Components\Select::make('scale')
-                                ->label(__('Scale'))
-                                ->native(false)
-                                ->options(PublicationScale::class),
-                        ])
+                                Forms\Components\TextInput::make('link')
+                                    ->label(__('Source Link'))
+                                    ->columnSpan('full')
+                                    ->maxLength(1999),
+                                Forms\Components\TextInput::make('citation')
+                                    ->translateLabel()
+                                    ->numeric()
+                                    ->maxLength(255),
+                                Forms\Components\Select::make('scale')
+                                    ->label(__('Scale'))
+                                    ->native(false)
+                                    ->options(PublicationScale::class),
+                            ])
                             ->columns(2)
                             ->collapsible(),
                     ])->columnSpan(['lg' => fn (?Publication $record) => $record === null ? 3 : 2]),
@@ -150,9 +152,9 @@ class PublicationResource extends Resource
                 PublicationDetails::make('title')
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query
-                            ->where('title', 'like',"%{$search}%")
-                            ->orWhere('type', 'like',"%{$search}%")
-                            ->orWhere('scale', 'like',"%{$search}%");
+                            ->where('title', 'like', "%{$search}%")
+                            ->orWhere('type', 'like', "%{$search}%")
+                            ->orWhere('scale', 'like', "%{$search}%");
                     }),
                 AuthorsList::make('lecturers')
                     ->label(__('Research Team')),
@@ -163,7 +165,7 @@ class PublicationResource extends Resource
                     ->label(__('Total Funds'))
                     ->prefix('Rp. ')
                     ->toggleable()
-                    ->numeric(0,'.',','),
+                    ->numeric(0, '.', ','),
                 Tables\Columns\TextColumn::make('fund_source')
                     ->label(__('Source Fund'))
                     ->toggleable()
