@@ -3,11 +3,15 @@
 namespace App\Filament\Lecturer\Resources\FinalProjectResource\Pages;
 
 use App\Filament\Lecturer\Resources\FinalProjectResource;
+use App\Models\FinalProject;
+use App\Models\Lecturer;
 use App\Models\Logbook;
 use App\Models\Student;
 use Filament\Facades\Filament;
 use Filament\Forms;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables;
@@ -30,6 +34,11 @@ class LogbookFinalProject extends ManageRelatedRecords
         return __("Final Project Logbook");
     }
 
+    public function getTitle(): string
+    {
+        return (__('Final Project Logbook'));
+    }
+
     public function form(Form $form): Form
     {
         return $form
@@ -48,10 +57,26 @@ class LogbookFinalProject extends ManageRelatedRecords
                     ->columnSpanFull()
                     ->disabled(auth()->user()->role !== '4')
                     ->required(),
-                Forms\Components\MarkdownEditor::make('feedback')
-                    ->label(__('Feedback'))
+                Repeater::make('feedbacks')
+                    ->relationship('feedbacks')
+                    ->schema([
+                        Forms\Components\Hidden::make('lecturer_id')
+                            ->default(fn () => Lecturer::where('user_id', auth()->user()->id)->first()?->id)
+                            ->live(),
+                        Forms\Components\TextInput::make('lecturer_name')
+                            ->label('Lecturer')
+                            ->formatStateUsing(fn (Get $get) => Lecturer::where('id', $get('lecturer_id'))->first()?->name)
+                            ->disabled(true),
+                        Forms\Components\MarkdownEditor::make('content')
+                            ->disabled(fn (Get $get) => $get('lecturer_id') !== Lecturer::where('user_id', auth()->user()->id)->first()->id)
+                            ->disableAllToolbarButtons()
+                            ->required()
+                    ])
+                    ->deletable(false)
+                    ->addActionLabel(__('Add Feedback'))
+                    ->maxItems(2)
+                    ->columnSpanFull()
                     ->hidden(auth()->user()->role !== '3')
-                    ->columnSpanFull(),
             ]);
     }
 
@@ -79,10 +104,18 @@ class LogbookFinalProject extends ManageRelatedRecords
                     ->label('Activity')
                     ->wrap()
                     ->lineClamp(5),
-                Tables\Columns\TextColumn::make('feedback')
+                Tables\Columns\TextColumn::make('feedbacks')
                     ->label('Feedback')
+                    ->formatStateUsing(function ($record) {
+                        $feedbackList = $record->feedbacks->map(function ($feedback) {
+                            return "<p class='line-clamp-5'><b>{$feedback->lecturer->name}</b>:<br> {$feedback->content}</p>";
+                        })
+                            ->implode('<br>');
+
+                        return $feedbackList;
+                    })
+                    ->html()
                     ->wrap()
-                    ->lineClamp(5),
             ])
             ->filters([
                 // 
@@ -132,14 +165,59 @@ class LogbookFinalProject extends ManageRelatedRecords
                             ->markdown()
                             ->columnSpanFull(),
                     ]),
-                Components\Section::make(__("Feedback"))
+                Components\Section::make(function ($record) {
+                    $finalProject = FinalProject::where('id', $record->commentable_id)->first();
+                    $supervisorTwo = $finalProject->lecturers->where('pivot.role', 'supervisor 2')->first();
+
+                    return $supervisorTwo ? __('Feedback Supervisor 1') : __('Feedback Supervisor');
+                })
+                    ->relationship('feedbacks')
                     ->schema([
-                        Components\TextEntry::make('feedback')
+                        Components\TextEntry::make('content')
                             ->label('')
                             ->markdown()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->html()
+                            ->formatStateUsing(function ($record) {
+                                $finalProject = FinalProject::where('id', $record->commentable_id)->first();
+                                $supervisorOne = $finalProject->lecturers->where('pivot.role', 'supervisor 1')->first();
+                                $feedback = $record->feedbacks->where('lecturer_id', $supervisorOne->id)->first();
+
+                                return "<p><span class='font-bold text-base'>{$supervisorOne->name}</span> :<br> {$feedback->content}</p>";
+                            }),
                     ])
-                    ->hidden(fn (?Logbook $record) => !$record->feedback),
+                    ->hidden(function ($record) {
+                        $finalProject = FinalProject::where('id', $record->commentable_id)->first();
+                        $supervisorOne = $finalProject->lecturers->where('pivot.role', 'supervisor 1')->first();
+                        $feedback = $record->feedbacks->where('lecturer_id', $supervisorOne->id)->first();
+
+                        return !$feedback;
+                    }),
+                Components\Section::make(__("Feedback Supervisor 2"))
+                    ->relationship('feedbacks')
+                    ->schema([
+                        Components\TextEntry::make('content')
+                            ->label('')
+                            ->markdown()
+                            ->columnSpanFull()
+                            ->formatStateUsing(function ($record) {
+                                $finalProject = FinalProject::where('id', $record->commentable_id)->first();
+                                $supervisorTwo = $finalProject->lecturers->where('pivot.role', 'supervisor 2')->first();
+                                $feedback = $record->feedbacks->where('lecturer_id', $supervisorTwo->id)->first();
+
+                                return "<p><span class='font-bold text-base'>{$supervisorTwo->name}</span> :<br> {$feedback->content}</p>";
+                            }),
+                    ])
+                    ->hidden(function ($record) {
+                        $finalProject = FinalProject::where('id', $record->commentable_id)->first();
+                        $supervisorTwo = $finalProject->lecturers->where('pivot.role', 'supervisor 2')->first();
+                        if (!$supervisorTwo) {
+                            return true;
+                        }
+                        $feedback = $record->feedbacks->where('lecturer_id', $supervisorTwo->id)->first();
+
+                        return !$feedback;
+                    }),
             ])
             ->columns(3);
     }
@@ -193,7 +271,7 @@ class LogbookFinalProject extends ManageRelatedRecords
         $table->addRow();
         $table->addCell(2000, $cellVCentered)->addText('Pembimbing', null, $cellHCentered);
         $table->addCell(4000, $cellVCentered)->addText('Nama Pembimbing', null, $cellHCentered);
-        $table->addCell(5000, $cellVCentered)->addText("Paraf dan Tgl. Persetujuan Ujian Akhir", null, $cellHCentered);
+        $table->addCell(4000, $cellVCentered)->addText("Paraf dan Tgl. Persetujuan Ujian Akhir", null, $cellHCentered);
 
         $table->addRow(1000);
         // use foreach to add supervisor
@@ -201,17 +279,17 @@ class LogbookFinalProject extends ManageRelatedRecords
         foreach ($supervisorOne as $supervisor) {
             $table->addCell(2000, $cellVCentered)->addText('I', null, $cellHCentered);
             $table->addCell(4000, $cellVCentered)->addText($supervisor->name, null, $cellHCentered);
-            $table->addCell(5000);
+            $table->addCell(4000);
         }
-        
+
         $supervisorTwo = $student->finalProject->lecturers->where('pivot.role', 'supervisor 2');
-        
-        if($supervisorTwo->count() > 0) {
+
+        if ($supervisorTwo->count() > 0) {
             $table->addRow(1000);
             foreach ($supervisorTwo as $supervisor) {
                 $table->addCell(2000, $cellVCentered)->addText('II', null, $cellHCentered);
                 $table->addCell(4000, $cellVCentered)->addText($supervisor->name, null, $cellHCentered);
-                $table->addCell(5000);
+                $table->addCell(4000);
             }
         }
 
@@ -220,7 +298,7 @@ class LogbookFinalProject extends ManageRelatedRecords
 
         // final project title
         $section->addTextBreak(1);
-        
+
         $table = $section->addTable([
             'borderSize' => 6,
             'borderColor' => '000000',
@@ -231,7 +309,7 @@ class LogbookFinalProject extends ManageRelatedRecords
 
         // activity log
         $section->addTextBreak(1);
-        
+
         $table = $section->addTable([
             'borderSize' => 6,
             'borderColor' => '000000',
@@ -240,9 +318,9 @@ class LogbookFinalProject extends ManageRelatedRecords
         $table->addRow();
         $table->addCell(1000, $cellVCentered)->addText('No.', null, $cellHCentered);
         $table->addCell(3000, $cellVCentered)->addText('Tanggal Bimbingan.', null, $cellHCentered);
-        $table->addCell(5000, $cellVCentered)->addText('Uraian Kegiatan.', null, $cellHCentered);
-        $table->addCell(2000, $cellVCentered)->addText('Paraf Pemb.', null, $cellHCentered);
-        
+        $table->addCell(4500, $cellVCentered)->addText('Uraian Kegiatan.', null, $cellHCentered);
+        $table->addCell(1500, $cellVCentered)->addText('Paraf Pemb.', null, $cellHCentered);
+
         $logbooks = $student->finalProject->logbooks->sortBy('date');
 
         $i = 1;
@@ -250,14 +328,14 @@ class LogbookFinalProject extends ManageRelatedRecords
             $date = explode(', ', static::idDateFormat($logbook->date, true));
             $activity = explode("\n", $logbook->activity);
 
-            $table->addRow();
+            $table->addRow(1000);
             $table->addCell(1000, $cellVCentered)->addText($i++, null, $cellHCentered);
-            $table->addCell(2000, $cellVCentered)->addText($date[0] . ',' . "</w:t><w:br/><w:t>" . $date[1], null, $cellHCentered);
-            $activityCell = $table->addCell(5000);
+            $table->addCell(3000, $cellVCentered)->addText($date[0] . ',' . "</w:t><w:br/><w:t>" . $date[1], null, $cellHCentered);
+            $activityCell = $table->addCell(4500, $cellVCentered);
             foreach ($activity as $line) {
                 $activityCell->addText($line);
             }
-            $table->addCell(2000, $cellVCentered);
+            $table->addCell(1500, $cellVCentered);
         }
 
         $fileName = 'logbook_final_project_' . $student->nim . '.docx';
