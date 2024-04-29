@@ -9,6 +9,10 @@ use Filament\Resources\Pages\EditRecord;
 class EditFinalProjectS2 extends EditRecord
 {
     protected static string $resource = FinalProjectS2Resource::class;
+    public static function getNavigationLabel(): string
+    {
+        return __("Edit Final Project");
+    }
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

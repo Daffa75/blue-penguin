@@ -106,6 +106,7 @@ class ListFinalProjectS2 extends ListRecords
                 }),
             Action::make('export')
                 ->action(fn () => $this->export())
+                ->hidden(auth()->user()->role !== '0')
         ];
     }
 }

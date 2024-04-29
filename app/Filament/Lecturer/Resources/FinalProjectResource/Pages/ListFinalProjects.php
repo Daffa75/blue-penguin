@@ -94,7 +94,11 @@ class ListFinalProjects extends ListRecords
                     };
 
                     $supervisorOneId = Lecturer::where('nip', '=', $data['supervisorOne'])->get()->first()->id;
-                    $supervisorTwoId = Lecturer::where('nip', '=', $data['supervisorTwo'])->get()->first()->id;
+                    
+                    $supervisorTwoId = null;
+                    if (!empty($data['supervisorTwo'])) {
+                        $supervisorTwoId = Lecturer::where('nip', '=', $data['supervisorTwo'])->get()->first()->id;
+                    }
 
 
                     $newFinalProject = function () use ($newData, $supervisorOneId, $supervisorTwoId, $evaluatorIds) {

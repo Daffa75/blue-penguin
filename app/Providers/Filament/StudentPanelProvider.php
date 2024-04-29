@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Auth\CustomLogin;
 use App\Filament\Student\Pages\Auth\CustomProfile;
 use App\Filament\Widgets\AccountOverviewCustom;
+use App\Filament\Widgets\TimeElapsedStatsOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -47,6 +48,7 @@ class StudentPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Student/Widgets'), for: 'App\\Filament\\Student\\Widgets')
             ->widgets([
                 AccountOverviewCustom::class,
+                TimeElapsedStatsOverview::class
             ])
             ->sidebarCollapsibleOnDesktop()
             ->plugins([
