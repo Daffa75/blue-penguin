@@ -10,7 +10,6 @@ use App\Models\Lecturer;
 use App\Models\Student;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Pages\SubNavigationPosition;
@@ -24,6 +23,9 @@ use Filament\Infolists\Components;
 class InternshipResource extends Resource
 {
     protected static ?string $model = Internship::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-server-stack';
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationGroup(): ?string
     {
@@ -55,8 +57,6 @@ class InternshipResource extends Resource
 
         return parent::getEloquentQuery();
     }
-
-    protected static ?string $navigationIcon = 'heroicon-o-server-stack';
 
     private static function getFilters(): array
     {
@@ -117,6 +117,15 @@ class InternshipResource extends Resource
                             ->label(__('Supervisor Email'))
                             ->regex('/^\S+@\S+\.\S+$/')
                             ->columnSpanFull(),
+                        Forms\Components\Select::make('status')
+                            ->label(__('Status'))
+                            ->native(false)
+                            ->options([
+                                'Ongoing' => 'Ongoing',
+                                'Done' => 'Done',
+                            ])
+                            ->default('Ongoing')
+                            ->columnSpanFull(),
                         Forms\Components\DatePicker::make('start_date')
                             ->label(__('Start Date'))
                             ->required(),
@@ -162,7 +171,6 @@ class InternshipResource extends Resource
                                     ->where('name', 'like', "%{$search}%")
                                     ->orWhere('nim', 'like', "%{$search}%");
                             });
-                            // ->orWhere('title', 'like', "%{$search}%");
                     })
                     ->hidden(function () {
                         return Filament::getCurrentPanel()->getId() === 'student';
@@ -205,19 +213,18 @@ class InternshipResource extends Resource
                     ->date('d M Y'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
-                    ->state(fn (Internship $record) => now() >= $record->end_date ? __('Done') : __('Ongoing'))
-                    ->color(fn (Internship $record) => now() >= $record->end_date ? 'success' : 'gray')
+                    ->color(fn ($record) => now() >= $record->status == 'Done' ? 'success' : 'gray')
                     ->badge(),
             ])
             // ->filters(self::getFilters())
             ->filters([
-                // get status filter but i don't have status column in internship table
-                // Tables\Filters\SelectFilter::make('status')
-                //     ->label('Status')
-                //     ->options([
-                //         'ongoing' => 'Ongoing',
-                //         'done' => 'Done',
-                //     ]),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
+                    ->native(false)
+                    ->options([
+                        'ongoing' => 'Ongoing',
+                        'done' => 'Done',
+                    ]),
             ])
             // ->filtersFormColumns([
             //     'md', 'lg' => 3,

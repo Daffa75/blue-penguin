@@ -14,18 +14,8 @@ class Internship extends Model
 
     protected $table = 'internships';
 
-    protected $fillable = [
-        'lecturer_id',
-        'company_name',
-        'location',
-        'job_description',
-        'supervisor_name',
-        'supervisor_phone',
-        'supervisor_email',
-        'start_date',
-        'end_date',
-    ];
-    
+    protected $guarded = [];
+
     public function lecturer(): BelongsTo
     {
         return $this->belongsTo(Lecturer::class);

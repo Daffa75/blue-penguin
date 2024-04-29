@@ -29,6 +29,7 @@ class ListInventaris extends ListRecords
             Actions\CreateAction::make(),
             Action::make('export')
                 ->action(fn () => $this->export())
+                ->hidden(auth()->user()->role !== '0'),
         ];
     }
 }
