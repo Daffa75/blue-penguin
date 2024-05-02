@@ -13,6 +13,7 @@ class Module extends Model
     protected $table = 'modules';
 
     protected $fillable = [
+        'semester_id',
         'module_name',
         'module_code',
         'credit_points',

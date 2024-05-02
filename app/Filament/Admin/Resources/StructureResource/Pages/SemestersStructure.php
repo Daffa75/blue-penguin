@@ -2,11 +2,13 @@
 
 namespace App\Filament\Admin\Resources\StructureResource\Pages;
 
+use App\Actions\FilamentImport\Action\ImportAction;
 use App\Filament\Admin\Resources\StructureResource;
 use App\Filament\Tables\Columns\CurriculumsList;
 use App\Models\Curriculum\CurriculumStructure;
 use App\Models\Curriculum\Module;
 use App\Models\Curriculum\Semester;
+use Konnco\FilamentImport\Actions\ImportField;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
@@ -113,6 +115,54 @@ class SemestersStructure extends ManageRelatedRecords
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]));
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ImportAction::make('modules')
+                ->fields([
+                    ImportField::make('semester_name'),
+                    ImportField::make('module_code'),
+                    ImportField::make('module_name'),
+                    ImportField::make('credit_points'),
+                    ImportField::make('module_handbook'),
+                ])
+                ->handleRecordCreation(function ($data) {
+                    $semesterName = $data['semester_name'];
+                    $moduleCode = $data['module_code'];
+                    $moduleName = $data['module_name'];
+                    $creditPoints = $data['credit_points'];
+                    $moduleHandbook = $data['module_handbook'];
+
+                    // Find or create the semester
+                    $semester = Semester::firstOrCreate([
+                        'semester_name' => $semesterName,
+                        'curriculum_id' => $this->getRecord()->id,
+                    ]);
+
+                    // Create the module with the proper semester_id
+                    $module = new Module([
+                        'semester_id' => $semester->id,
+                        'module_code' => $moduleCode,
+                        'module_name' => $moduleName,
+                        'credit_points' => $creditPoints,
+                        'module_handbook' => $moduleHandbook,
+                        // Add other module attributes here
+                    ]);
+
+                    // Save the module
+                    $module->save();
+
+                    // Calculate the credit total for the semester
+                    $creditTotal = $semester->modules()->sum('credit_points');
+
+                    // Update the semester credit total
+                    $semester->update(['credit_total' => $creditTotal]);
+
+                    return $module;
+                })
+        ];
     }
 
     public static function getModulesRepeater(): Repeater

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use App\Actions\FilamentImport\Action\ImportAction;
 use App\Filament\Admin\Resources\StructureResource\Api\Transformers\StructureTransformer;
 use App\Filament\Admin\Resources\StructureResource\Pages;
 use App\Filament\Admin\Resources\StructureResource\RelationManagers\SemesterRelationManager;
@@ -19,6 +20,7 @@ use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Filament\Pages\SubNavigationPosition;
+use Konnco\FilamentImport\Actions\ImportField;
 
 class StructureResource extends Resource
 {
@@ -171,6 +173,22 @@ class StructureResource extends Resource
                 ]),
             ])->deferLoading();
     }
+
+    // protected function getHeaderActions(): array
+    // {
+    //     return [
+    //         ImportAction::make('modules')
+    //             ->fields([
+    //                 ImportField::make('semester_name'),
+    //                 ImportField::make('module_code'),
+    //                 ImportField::make('module_name'),
+    //                 ImportField::make('credit_points'),
+    //             ])
+    //             ->handleRecordCreation(function ($data) {
+                    
+    //             })
+    //     ];
+    // }
 
     public static function getRelations(): array
     {

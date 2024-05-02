@@ -28,4 +28,5 @@ class CurriculumStructure extends Model implements HasMedia
     {
         return $this->hasMany(Semester::class, 'curriculum_id');
     }
+    
 }
