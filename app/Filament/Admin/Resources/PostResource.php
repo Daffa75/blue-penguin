@@ -89,20 +89,24 @@ class PostResource extends Resource
                     ->schema([
                         Forms\Components\Section::make('Option')
                             ->schema([
+
                                 Forms\Components\Select::make('status')
                                     ->options([
                                         'draft' => 'Draft',
                                         'published' => 'Published',
                                     ])
+                                    ->default('published')
                                     ->required()
+                                    ->native(false)
                                     ->live(),
 
                                 Forms\Components\DateTimePicker::make('published_at')
                                     ->seconds(false)
-                                    ->timezone('Asia/Makassar')
+                                    ->default(fn () => now()->setTime(0, 0, 0))
                                     ->hidden(fn (Get $get) => $get('status') !== 'published'),
 
                                 Forms\Components\Select::make('language')
+                                    ->native(false)
                                     ->label(__("Language"))
                                     ->options([
                                         'id' => 'Bahasa Indonesia',
@@ -111,14 +115,14 @@ class PostResource extends Resource
                                     ->required(),
 
                                 Forms\Components\Select::make('website')
+                                    ->native(false)
+                                    ->default('bachelor')
                                     ->label(__("Website"))
                                     ->options([
                                         'bachelor' => 'Sarjana',
                                         'master' => 'Magister',
                                     ])
                                     ->required(),
-
-                                SpatieTagsInput::make('tags'),
                             ])
                     ])
                     ->columnSpan(['lg' => 1]),

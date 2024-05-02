@@ -33,26 +33,6 @@ class DepartmentEventResource extends Resource
         return __('Department Event');
     }
 
-    private static function getPanelId(): string
-    {
-        return Filament::getCurrentPanel()->getId();
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        $results = parent::getEloquentQuery();
-
-        if (self::getPanelId() === 'lecturer') {
-            return $results
-                ->whereHas('lecturers', function (Builder $query) {
-                    return $query
-                        ->where('nip', auth()->user()->lecturer?->nip);
-                });
-        }
-
-        return $results;
-    }
-
     public static function form(Form $form): Form
     {
         return $form
