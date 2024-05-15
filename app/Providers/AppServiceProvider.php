@@ -10,6 +10,13 @@ use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use App\Filament\Auth\CustomLoginResponse;
+use App\Filament\Auth\CustomLogoutResponse;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Support\Facades\Route;
+use Livewire\Livewire;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -31,6 +38,12 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->app->bind(LogoutResponseContract::class, CustomLogout::class);
+        $this->app->bind(LoginResponseContract::class, CustomLoginResponse::class);
+        $this->app->bind(LogoutResponseContract::class, CustomLogoutResponse::class);
+
+        FilamentAsset::register([
+            Js::make('custom-script', __DIR__ . '/../../resources/js/custom.js')->loadedOnRequest(),
+        ]);
 
         FilamentColor::register([
             'violet' => Color::hex('#6B33AF'),

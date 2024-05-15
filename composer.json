@@ -18,6 +18,7 @@
         "filament/spatie-laravel-media-library-plugin": "3.2",
         "filament/spatie-laravel-tags-plugin": "3.2",
         "flowframe/laravel-trend": "^0.1.5",
+        "funkjedi/composer-include-files": "^1.1",
         "guzzlehttp/guzzle": "^7.2",
         "konnco/filament-import": "2.0.2-beta",
         "laravel/framework": "^10.10",
@@ -73,8 +74,13 @@
         ]
     },
     "extra": {
+        "include_files": [
+            "app/Helpers/CustomUrlSubfolder.php"
+        ],
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+                "livewire/livewire"
+            ]
         }
     },
     "config": {
@@ -83,7 +89,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "funkjedi/composer-include-files": true
         }
     },
     "minimum-stability": "stable",

@@ -55,7 +55,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'https://eng.unhas.ac.id/siminformatika'),
 
     'asset_url' => env('ASSET_URL'),
 
@@ -175,6 +175,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
+        App\Providers\CustomLivewireServiceProvider::class
     ])->toArray(),
 
     /*
