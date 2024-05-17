@@ -16,6 +16,7 @@ class TeachingStaff extends Model
         'role_id',
         'expertise_en',
         'expertise_idn',
+        'concentration',
         'link',
         'email'
     ];

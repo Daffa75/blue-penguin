@@ -18,6 +18,7 @@ class TeachingStaffTransformer extends JsonResource
             'name' => $this->lecturer->name,
             'nip' => $this->lecturer->nip,
             'email' => $this->email,
+            'concentration' => $this->concentration,
             'role_en' => $this->role->role_en,
             'role_idn' => $this->role->role_idn,
             'expertise_en' => $this->expertise_en,

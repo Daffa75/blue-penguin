@@ -51,12 +51,22 @@ class TeachingStaffResource extends Resource
                             ->translateLabel()
                             ->options(Lecturer::all()->pluck('name', 'id'))
                             ->searchable()
+                            ->columnSpanFull()
                             ->required(),
+                        Forms\Components\Select::make('concentration')
+                            ->required()
+                            ->translateLabel()
+                            ->options([
+                                'Artificial Intelligence' => 'Artificial Intelligence',
+                                'Cloud Computing' => 'Cloud Computing',
+                                'Internet of Things' => 'Internet of Things'
+                            ]),
                         Forms\Components\Select::make('role_id')
                             ->label('Position')
                             ->helperText('dalam bahasa indonesia')
                             ->translateLabel()
                             ->relationship(name: 'role', titleAttribute: 'role_idn')
+                            ->preload()
                             ->searchable()
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('role_en')
@@ -107,19 +117,27 @@ class TeachingStaffResource extends Resource
                 Tables\Columns\TextColumn::make('lecturer.name')
                     ->translateLabel()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('concentration')
+                    ->translateLabel()
+                    ->searchable()
+                    ->toggleable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('role.role_idn')
                     ->label('Position')
                     ->translateLabel()
                     ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('expertise_idn')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->translateLabel()
+                    ->sortable()
                     ->searchable()
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -139,9 +157,7 @@ class TeachingStaffResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTeachingStaff::route('/'),
-            'view' => Pages\ViewTeachingStaff::route('/{record}'),
-            'edit' => Pages\EditTeachingStaff::route('/{record}/edit'),
+            'index' => Pages\ManageTeachingStaff::route('/'),
         ];
     }
 }
