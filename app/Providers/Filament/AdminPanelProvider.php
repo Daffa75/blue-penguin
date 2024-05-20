@@ -35,7 +35,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
-            ->brandLogo(asset('assets/images/logo.png'))
+            ->brandLogo(asset('assets/images/unhas-logo.png'))
             ->brandLogoHeight('2.5rem')
             ->favicon(asset('favicon.ico'))
             ->id('admin')
