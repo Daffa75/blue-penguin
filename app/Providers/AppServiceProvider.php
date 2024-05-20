@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Filament\Auth\CustomLogout;
 use BezhanSalleh\PanelSwitch\PanelSwitch;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
@@ -37,14 +36,13 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        $this->app->bind(LogoutResponseContract::class, CustomLogout::class);
         $this->app->bind(LoginResponseContract::class, CustomLoginResponse::class);
         $this->app->bind(LogoutResponseContract::class, CustomLogoutResponse::class);
 
         FilamentAsset::register([
             Js::make('custom-script', __DIR__ . '/../../resources/js/custom.js')->loadedOnRequest(),
         ]);
-
+        
         FilamentColor::register([
             'violet' => Color::hex('#6B33AF'),
             'teal' => Color::Teal,

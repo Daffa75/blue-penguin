@@ -5,7 +5,7 @@ namespace App\Filament\Auth;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as BaseLogout;
 use Illuminate\Http\RedirectResponse;
 
-class CustomLogout implements BaseLogout
+class CustomLogoutResponse implements BaseLogout
 {
 
     public function toResponse($request): RedirectResponse

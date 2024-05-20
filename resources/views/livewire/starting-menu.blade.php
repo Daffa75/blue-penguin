@@ -8,7 +8,7 @@
     </div>
     <div class="flex flex-col flex-grow sm:flex-row items-center justify-center gap-4 md:gap-6 w-full">
         @foreach ($panels as $panel)
-            <a href="{{'/' . $panel->getPath()}}"
+            <a href="{{'/siminformatika/' . $panel->getPath()}}"
                class="flex flex-col items-center justify-center hover:cursor-pointer group panel-switch-card" >
                 <div
                     @class([
