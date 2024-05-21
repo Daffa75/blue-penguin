@@ -35,7 +35,9 @@ class CustomLivewireServiceProvider extends LivewireServiceProvider
         });
 
         Livewire::setScriptRoute(function ($handle) {
-            return Route::get('/siminformatika/livewire/livewire.js', $handle);
+            return config('app.debug')
+                ? Route::get('/siminformatika/livewire/livewire.js', $handle)
+                : Route::get('/siminformatika/livewire/livewire.min.js', $handle);
         });
     }
 
