@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Livewire\Features\CustomGenerateSignedUploadUrl;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Livewire\ComponentHookRegistry;
 use Livewire\Features\SupportFileUploads\GenerateSignedUploadUrl;
 use Livewire\Livewire;
@@ -38,6 +40,23 @@ class CustomLivewireServiceProvider extends LivewireServiceProvider
             return config('app.debug')
                 ? Route::get('/siminformatika/livewire/livewire.js', $handle)
                 : Route::get('/siminformatika/livewire/livewire.min.js', $handle);
+        });
+
+        $checkValidSignature = (config('app.env') === 'production' && str_contains(URL::current(), 'livewire/upload-file'));
+
+        Request::macro('hasValidSignature', function ($absolute = true) use ($checkValidSignature) {
+            if ($checkValidSignature) return true;
+            return URL::hasValidSignature($this, $absolute);
+        });
+
+        Request::macro('hasValidRelativeSignature', function () use ($checkValidSignature) {
+            if ($checkValidSignature) return true;
+            return URL::hasValidSignature($this, $absolute = false);
+        });
+
+        Request::macro('hasValidSignatureWhileIgnoring', function ($ignoreQuery = [], $absolute = true) use ($checkValidSignature) {
+            if ($checkValidSignature) return true;
+            return URL::hasValidSignature($this, $absolute, $ignoreQuery);
         });
     }
 
