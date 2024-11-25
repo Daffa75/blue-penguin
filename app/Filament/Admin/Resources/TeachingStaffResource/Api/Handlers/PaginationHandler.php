@@ -20,7 +20,7 @@ class PaginationHandler extends Handlers {
         ->with('role')
         ->allowedFields($model::$allowedFields ?? [])
         ->allowedSorts($model::$allowedSorts ?? [])
-        ->allowedFilters($model::$allowedFilters ?? [])
+        ->allowedFilters($model::$allowedFilters ?? ['concentration'])
         ->allowedIncludes($model::$allowedIncludes ?? null)
         ->paginate(request()->query('per_page'))
         ->appends(request()->query());
