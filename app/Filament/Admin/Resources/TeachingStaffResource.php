@@ -18,6 +18,9 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use app\Filament\Admin\Clusters\Staffs\Resources\TeachingStaffResource\RelationManagers as StaffRelationManagers;
+use Filament\Pages\Page;
+use Filament\Pages\SubNavigationPosition;
 
 class TeachingStaffResource extends Resource
 {
@@ -47,15 +50,23 @@ class TeachingStaffResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('lecturer_id')
                             ->label('Lecturer')
-                            ->disabledOn('edit')
+                            ->disabledOn(operations: 'edit')
                             ->translateLabel()
-                            ->options(Lecturer::all()->pluck('name', 'id'))
+                            ->relationship('lecturer', 'name') // This ensures the name is shown
+                            ->options(function () {
+                                // Get all lecturer IDs that have already been assigned
+                                $assignedLecturers = \App\Models\TeachingStaff::pluck('lecturer_id')->toArray();
+                            
+                                // Return lecturers that are not assigned, display lecturer name
+                                return \App\Models\Lecturer::whereNotIn('id', $assignedLecturers)
+                                    ->pluck('name', 'id');
+                            })
                             ->searchable()
                             ->columnSpanFull()
                             ->required(),
                         Forms\Components\Select::make('concentration')
                             ->required()
-                            ->translateLabel()
+                            ->translateLabel() 
                             ->options([
                                 'Artificial Intelligence' => 'Artificial Intelligence',
                                 'Cloud Computing' => 'Cloud Computing',
@@ -63,45 +74,47 @@ class TeachingStaffResource extends Resource
                             ]),
                         Forms\Components\Select::make('role_id')
                             ->label('Position')
-                            ->helperText('dalam bahasa indonesia')
                             ->translateLabel()
                             ->relationship(name: 'role', titleAttribute: 'role_idn')
                             ->preload()
                             ->searchable()
                             ->createOptionForm([
+                                Forms\Components\TextInput::make('role_idn')
+                                ->label('Position in Indonesian')
+                                ->translateLabel()
+                                ->required()
+                                ->maxLength(length: 255),
                                 Forms\Components\TextInput::make('role_en')
                                     ->label('Position in English')
-                                    ->translateLabel()
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('role_idn')
-                                    ->label('Position in Indonesian')
                                     ->translateLabel()
                                     ->required()
                                     ->maxLength(255)
                             ])
                             ->required(),
-                        Forms\Components\TextInput::make('expertise_en')
-                            ->label('Expertise in English')
-                            ->translateLabel()
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('expertise_idn')
-                            ->label('Expertise in Indonesian')
-                            ->translateLabel()
-                            ->required()
-                            ->maxLength(255),
                         Forms\Components\TextInput::make('email')
                             ->email()
                             ->translateLabel()
                             ->required()
-                            ->maxLength(255),
-                        Forms\Components\TextInput::make('link')
-                            ->label('Handbook Link')
-                            ->translateLabel()
-                            ->required()
+                            ->columnSpanFull()
                             ->maxLength(255),
                     ]),
+
+                    Forms\Components\Section::make('Tautan')
+                    ->columns(3)
+                    ->schema([
+                        Forms\Components\TextInput::make('handbook_link')
+                        ->label('Handbook')
+                        ->translateLabel()
+                        ->maxLength(255),
+                        Forms\Components\TextInput::make('scholar_link')
+                        ->label('Google Scholar')
+                        ->translateLabel()
+                        ->maxLength(255),
+                        Forms\Components\TextInput::make('scopus_link')
+                        ->label('Scopus')
+                        ->translateLabel()
+                        ->maxLength(255),
+                    ])
 
 
             ]);
@@ -116,6 +129,7 @@ class TeachingStaffResource extends Resource
                     ->circular(),
                 Tables\Columns\TextColumn::make('lecturer.name')
                     ->translateLabel()
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('concentration')
                     ->translateLabel()
@@ -128,11 +142,6 @@ class TeachingStaffResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
-                Tables\Columns\TextColumn::make('expertise_idn')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->translateLabel()
-                    ->sortable()
-                    ->searchable()
             ])
             ->filters([
                 //
@@ -150,7 +159,7 @@ class TeachingStaffResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            StaffRelationManagers\StaffExpertiseRelationManager::class
         ];
     }
 
@@ -158,6 +167,18 @@ class TeachingStaffResource extends Resource
     {
         return [
             'index' => Pages\ManageTeachingStaff::route('/'),
+            'create' => Pages\CreateTeachingStaff::route('/create'),
+            'view' => Pages\ViewTeachingStaff::route('/{record}'),
+            'edit' => Pages\EditTeachingStaff::route('/{record}/edit'),
         ];
     }
+    // protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
+    // public static function getRecordSubNavigation(Page $page): array
+    // {
+    //     return $page->generateNavigationItems([
+    //         Pages\ViewTeachingStaff::class,
+    //         Pages\EditTeachingStaff::class,
+    //     ]);
+    // }
 }

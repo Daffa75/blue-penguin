@@ -20,7 +20,7 @@ class LecturerRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('name')
+            ->recordTitleAttribute(attribute: 'name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->icon(fn (Lecturer $record) => $record->image_url ?: asset('assets/images/default_avatar.jpg')),
@@ -30,7 +30,7 @@ class LecturerRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\AttachAction::make()
-                ->modalHeading(__('Attach Lecturer'))
+                ->modalHeading(__(key: 'Attach Lecturer'))
             ])
             ->actions([
                 Tables\Actions\DetachAction::make(),
