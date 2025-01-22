@@ -13,19 +13,32 @@ class DetailHandler extends Handlers
     public static string | null $uri = '/{nip}';
     public static string | null $resource = TeachingStaffResource::class;
 
-
     public function handler(Request $request)
-    {        
+    {
+        // Retrieve the `nip` parameter from the request
+        $nip = $request->route('nip');
+
+        if (!$nip) {
+            return static::sendNotFoundResponse(); // Ensure `nip` is provided
+        }
+
+        // Get the base query
         $model = static::getEloquentQuery();
 
-        $query = QueryBuilder::for(
-            $model->with('lecturer')
-            ->with('role')
-        )
+        // Build the query with necessary relationships and filter by `nip` in the related `lecturer` table
+        $query = QueryBuilder::for($model)
+            ->with(['lecturer.publications', 'role']) // Load the related models, including publications
+            ->whereHas('lecturer', function ($q) use ($nip) {
+                $q->where('nip', $nip); // Filter by `nip` in the `lecturers` table
+            })
             ->first();
 
-        if (!$query) return static::sendNotFoundResponse();
+        // Check if the record exists
+        if (!$query) {
+            return static::sendNotFoundResponse();
+        }
 
+        // Get the API transformer and return the transformed response
         $transformer = static::getApiTransformer();
 
         return new $transformer($query);

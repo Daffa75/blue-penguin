@@ -20,7 +20,7 @@ class LecturerRelationManager extends RelationManager
     public function table(Table $table): Table
         {
         return $table
-            ->recordTitleAttribute('name')
+            ->recordTitleAttribute(attribute: 'name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->icon(function (Lecturer $record) {
