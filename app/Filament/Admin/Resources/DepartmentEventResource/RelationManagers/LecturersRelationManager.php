@@ -13,18 +13,26 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class LecturersRelationManager extends RelationManager
-{
+    {
     protected static string $relationship = 'lecturers';
 
     public function table(Table $table): Table
-    {
+        {
         return $table
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->sortable()
                     ->translateLabel()
-                    ->icon(fn (Lecturer $record) => $record->image_url ?: asset('assets/images/default_avatar.jpg')),
+                    ->icon(function (Lecturer $record) {
+                        if (!$record->image_url)
+                            return \asset('assets/images/default_avatar.jpg');
+                        elseif (!empty (parse_url($record->image_url)['scheme']))
+                            return $record->image_url;
+                        elseif (empty (parse_url($record->image_url)['scheme']))
+                            return 'https://eng.unhas.ac.id/siminformatika' . $record->image_url;
+                        return \asset('assets/images/default_avatar.jpg');
+                        }),
                 Tables\Columns\TextColumn::make('role')
                     ->translateLabel()
                     ->sortable()
@@ -33,13 +41,13 @@ class LecturersRelationManager extends RelationManager
                         'info' => 'Head',
                         'success' => 'Staff',
                     ])
-                    ->formatStateUsing(fn (string $state): string => (__(ucfirst($state))))
+                    ->formatStateUsing(fn(string $state): string => (__(ucfirst($state))))
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                AttachAction::make()->preloadRecordSelect()->form(fn (AttachAction $action): array => [
+                AttachAction::make()->preloadRecordSelect()->form(fn(AttachAction $action): array => [
                     $action->getRecordSelect(),
                     Forms\Components\Select::make('role')
                         ->translateLabel()
@@ -62,5 +70,5 @@ class LecturersRelationManager extends RelationManager
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+        }
     }
-}

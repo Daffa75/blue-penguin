@@ -33,7 +33,15 @@ class LecturersRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->translateLabel()
-                    ->icon(fn (Lecturer $record) => $record->image_url ?: asset('assets/images/default_avatar.jpg')),
+                    ->icon(function (Lecturer $record) {
+                        if (!$record->image_url)
+                            return \asset('assets/images/default_avatar.jpg');
+                        elseif (!empty(parse_url($record->image_url)['scheme']))
+                            return $record->image_url;
+                        elseif (empty(parse_url($record->image_url)['scheme']))
+                            return 'https://eng.unhas.ac.id/siminformatika'.$record->image_url;
+                        return \asset('assets/images/default_avatar.jpg');
+                    }),
                 Tables\Columns\TextColumn::make('role')
                     ->translateLabel()
                     ->badge()

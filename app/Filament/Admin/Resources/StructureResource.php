@@ -5,7 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Actions\FilamentImport\Action\ImportAction;
 use App\Filament\Admin\Resources\StructureResource\Api\Transformers\StructureTransformer;
 use App\Filament\Admin\Resources\StructureResource\Pages;
-use App\Filament\Admin\Resources\StructureResource\RelationManagers\SemesterRelationManager;
+use App\Filament\Admin\Resources\StructureResource\RelationManager\SemesterRelationManager;
 use App\Models\Curriculum\CurriculumStructure;
 use App\Models\Curriculum\Semester;
 use Filament\Forms;
@@ -185,7 +185,7 @@ class StructureResource extends Resource
     //                 ImportField::make('credit_points'),
     //             ])
     //             ->handleRecordCreation(function ($data) {
-                    
+
     //             })
     //     ];
     // }

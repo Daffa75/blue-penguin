@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Admin\Resources\StructureResource\RelationManagers;
+namespace App\Filament\Admin\Resources\StructureResource\RelationManager;
 
 use App\Models\Curriculum\Module;
 use App\Models\Curriculum\Semester;

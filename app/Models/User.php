@@ -21,7 +21,7 @@ use Spatie\Color\Rgb;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
-{
+    {
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
@@ -73,46 +73,50 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     ];
 
     public function canAccessPanel(Panel $panel): bool
-    {
-        if ($panel->getId() == 'admin'){
-            return in_array($this->role, array('0','superadmin'));
-        } elseif ($panel->getId() == 'lecturer') {
-            return in_array($this->role, array('0','1','2','3','4'));
-        } elseif ($panel->getId() == 'finalProject') {
-            return in_array($this->role, array('0','1','2','3','4'));
-        } elseif ($panel->getId() == 'student') {
+        {
+        if ($panel->getId() == 'admin') {
+            return in_array($this->role, array('0', 'superadmin'));
+            } elseif ($panel->getId() == 'lecturer') {
+            return in_array($this->role, array('0', '1', '2', '3', '4'));
+            } elseif ($panel->getId() == 'finalProject') {
+            return in_array($this->role, array('0', '1', '2', '3', '4'));
+            } elseif ($panel->getId() == 'student') {
             return in_array($this->role, array('4'));
-        } 
+            }
         return false;
-    }
+        }
 
     public function getFilamentDefaultAvatar()
-    {
+        {
         $name = trim(collect(explode(' ', $this->name))->map(function ($segment) {
             return mb_substr($segment, 0, 1);
-        })->join(' '));
+            })->join(' '));
 
         $backgroundColor = Rgb::fromString('rgb(' . FilamentColor::getColors()['gray'][950] . ')')->toHex();
 
         return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=FFFFFF&background=' . str($backgroundColor)->after('#');
-    }
+        }
     public function getFilamentAvatarUrl(): ?string
-    {
-        return $this->lecturer->image_url ?? $this->getFilamentDefaultAvatar();
-    }
+        {
+        if ($this->lecturer?->image_url == null)
+            return $this->getFilamentDefaultAvatar();
+        elseif (empty(parse_url($this->lecturer?->image_url)['scheme']))
+            return 'https://eng.unhas.ac.id/siminformatika' . $this->lecturer->image_url;
+        return $this->lecturer->image_url;
+        }
 
     public function post(): HasMany
-    {
+        {
         return $this->hasMany(Post::class);
-    }
- 
+        }
+
     public function lecturer(): HasOne
-    {
+        {
         return $this->hasOne(Lecturer::class);
-    }
+        }
 
     public function student(): HasOne
-    {
+        {
         return $this->hasOne(Student::class);
+        }
     }
-}

@@ -19,30 +19,30 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 
 class LecturerResource extends Resource
-{
+    {
     protected static ?string $model = Lecturer::class;
 
     protected static ?string $recordTitleAttribute = 'name';
     public static function getPluralLabel(): ?string
-    {
+        {
         return (__('Lecturer'));
-    }
+        }
 
     public static function getGlobalSearchResultDetails(Model $record): array
-    {
+        {
         return [
             '' => $record->nip,
         ];
-    }
+        }
 
     protected static ?string $navigationIcon = 'phosphor-chalkboard-teacher';
     public static function getNavigationGroup(): ?string
-    {
+        {
         return (__('Management'));
-    }
+        }
 
     public static function form(Form $form): Form
-    {
+        {
         return $form
             ->schema([
                 Forms\Components\Section::make()
@@ -96,13 +96,13 @@ class LecturerResource extends Resource
                                                     ->reactive()
                                                     ->afterStateUpdated(function (Set $set, $state) {
                                                         $set('image_url', Storage::disk()->url($state->getRealPath()));
-                                                    }),
+                                                        }),
                                             ]),
                                         Forms\Components\Tabs\Tab::make('URL')
                                             ->schema([
                                                 Forms\Components\TextInput::make('image_url')
                                                     ->label('URL')
-                                                    ->disabled(fn (Get $get) => !empty($get('image'))),
+                                                    ->disabled(fn(Get $get) => !empty ($get('image'))),
                                             ]),
                                     ])
                                     ->columnSpan('full'),
@@ -119,30 +119,30 @@ class LecturerResource extends Resource
                                     ->label('')
                                     ->relationship('user', 'name')
                                     ->live()
-                                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('name', User::find((int)$state)->name))
+                                    ->afterStateUpdated(fn(Set $set, ?string $state) => $set('name', User::find((int) $state)->name))
                             ]),
                     ])
                     ->columns(2)
-                    ->columnSpan(['lg' => fn (?Lecturer $record) => $record === null ? 3 : 2]),
+                    ->columnSpan(['lg' => fn(?Lecturer $record) => $record === null ? 3 : 2]),
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Placeholder::make('Created at')
                             //                            ->label(__('Created at'))
                             ->translateLabel()
-                            ->content(fn (Lecturer $record): ?string => $record->created_at?->diffForHumans()),
+                            ->content(fn(Lecturer $record): ?string => $record->created_at?->diffForHumans()),
 
                         Forms\Components\Placeholder::make('Updated at')
                             //                            ->label(__('Last modified at'))
                             ->translateLabel()
-                            ->content(fn (Lecturer $record): ?string => $record->updated_at?->diffForHumans()),
+                            ->content(fn(Lecturer $record): ?string => $record->updated_at?->diffForHumans()),
                     ])
                     ->columnSpan(['lg' => 1])
-                    ->hidden(fn (?Lecturer $record) => $record === null),
+                    ->hidden(fn(?Lecturer $record) => $record === null),
             ])->columns(3);
-    }
+        }
 
     public static function table(Table $table): Table
-    {
+        {
         return $table
             ->searchPlaceholder(__('Search Name and NIP'))
             ->columns([
@@ -150,7 +150,15 @@ class LecturerResource extends Resource
                     ->translateLabel()
                     ->size(Tables\Columns\TextColumn\TextColumnSize::Medium)
                     ->weight(\Filament\Support\Enums\FontWeight::Medium)
-                    ->icon(fn (Lecturer $record) => $record->image_url ?: \asset('assets/images/default_avatar.jpg'))
+                    ->icon(function (Lecturer $record) {
+                        if (!$record->image_url)
+                            return \asset('assets/images/default_avatar.jpg');
+                        elseif (!empty (parse_url($record->image_url)['scheme']))
+                            return $record->image_url;
+                        elseif (empty (parse_url($record->image_url)['scheme']))
+                            return 'https://eng.unhas.ac.id/siminformatika' . $record->image_url;
+                        return \asset('assets/images/default_avatar.jpg');
+                        })
                     ->searchable()
                     ->copyable()
                     ->sortable(),
@@ -169,7 +177,7 @@ class LecturerResource extends Resource
                             ->count();
 
                         return $remainingQuota;
-                    })
+                        })
                     ->color(function (Lecturer $record) {
                         $remainingQuota = $record->quota - $record->finalProjects()
                             ->wherePivotIn('role', ['supervisor 1', 'supervisor 2'])
@@ -177,7 +185,7 @@ class LecturerResource extends Resource
                             ->count();
 
                         return $remainingQuota <= 0 ? 'danger' : ($remainingQuota < 5 ? 'warning' : 'okay');
-                    }),
+                        }),
                 Tables\Columns\TextColumn::make('quota')
                     ->label(__('Supervising Quota'))
                     ->sortable()
@@ -201,9 +209,9 @@ class LecturerResource extends Resource
                     ->trueLabel(__('Other than NIP'))
                     ->falseLabel(__('All'))
                     ->queries(
-                        true: fn (Builder $query) => $query->whereRaw('CHAR_LENGTH(nip) != 18 OR NOT nip REGEXP \'^[0-9]+$\''),
-                        false: fn (Builder $query) => $query->get(),
-                        blank: fn (Builder $query) => $query->where('nip', 'REGEXP', '[0-9]{18}$')
+                        true: fn(Builder $query) => $query->whereRaw('CHAR_LENGTH(nip) != 18 OR NOT nip REGEXP \'^[0-9]+$\''),
+                        false: fn(Builder $query) => $query->get(),
+                        blank: fn(Builder $query) => $query->where('nip', 'REGEXP', '[0-9]{18}$')
                     )
             ])
             ->actions([
@@ -217,23 +225,23 @@ class LecturerResource extends Resource
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),
             ]);
-    }
+        }
 
     public static function getRelations(): array
-    {
+        {
         return [
             RelationManagers\PublicationsRelationManager::class,
             RelationManagers\HakisRelationManager::class,
             RelationManagers\FinalProjectsRelationManager::class
         ];
-    }
+        }
 
     public static function getPages(): array
-    {
+        {
         return [
             'index' => Pages\ListLecturers::route('/'),
             'create' => Pages\CreateLecturer::route('/create'),
             'edit' => Pages\EditLecturer::route('/{record}/edit'),
         ];
+        }
     }
-}
